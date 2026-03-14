@@ -56,12 +56,12 @@ class AnthropicAdapter(LLMAdapter):
         """
         messages = [{"role": "user", "content": prompt}]
 
-        response = await self.async_client.messages.create(
+        response = await self.async_client.messages.create(  # type: ignore[attr-defined]
             model=self.model,
             max_tokens=max_tokens,
             temperature=temperature,
             system=system or "",
-            messages=messages,  # type: ignore[arg-type]
+            messages=messages,
             **kwargs,
         )
 
@@ -102,12 +102,12 @@ class AnthropicAdapter(LLMAdapter):
         """
         messages = [{"role": "user", "content": prompt}]
 
-        with self.sync_client.messages.stream(
+        with self.sync_client.messages.stream(  # type: ignore[attr-defined]
             model=self.model,
             max_tokens=max_tokens,
             temperature=temperature,
             system=system or "",
-            messages=messages,  # type: ignore[arg-type]
+            messages=messages,
             **kwargs,
         ) as stream:
             for text in stream.text_stream:
