@@ -3,7 +3,7 @@
 import asyncio
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Optional
 
 import typer
 from rich.console import Console
@@ -22,16 +22,64 @@ from specwiz.core.managers import CompositeConfigAdapter
 generate_app = typer.Typer(help="Generate documents")
 console = Console()
 
+# Template variables that accept external source documents, keyed by stage
+_SOURCE_INPUT_KEYS = (
+    "source_materials",       # knowledge_base_generator
+    "supporting_documents",   # product_context_generator
+    "example_requirements",   # engineering_rulebook_generator
+    "example_user_guides",    # writing_rulebook_generator
+    "example_diagrams",       # architecture_rulebook_generator
+    "example_release_notes",  # qa_rulebook_generator
+)
+
+_SOURCE_EXTENSIONS = {".md", ".txt", ".yaml", ".yml", ".py"}
+
+
+def _load_sources(paths: List[str]) -> str:
+    """Read files and directories and return their concatenated content."""
+    sections: List[str] = []
+
+    for raw_path in paths:
+        p = Path(raw_path)
+        if not p.exists():
+            console.print(f"[yellow]Warning: source path not found, skipping: {raw_path}[/yellow]")
+            continue
+
+        if p.is_file():
+            files = [p]
+        else:
+            files = sorted(
+                f for f in p.iterdir()
+                if f.is_file() and f.suffix in _SOURCE_EXTENSIONS
+            )
+
+        for f in files:
+            try:
+                content = f.read_text(encoding="utf-8")
+                sections.append(f"--- {f.name} ---\n{content}")
+            except Exception as exc:
+                console.print(f"[yellow]Warning: could not read {f}: {exc}[/yellow]")
+
+    return "\n\n".join(sections)
+
 
 async def _execute_generation(
     doc_type: str,
     project_root: Path,
     config: CompositeConfigAdapter,
+    source_paths: Optional[List[str]] = None,
     **options: Any,
 ) -> bool:
     """Execute document generation pipeline."""
 
     try:
+        # Inject external sources into all relevant stage input variables
+        if source_paths:
+            sources_content = _load_sources(source_paths)
+            if sources_content:
+                for key in _SOURCE_INPUT_KEYS:
+                    options.setdefault(key, sources_content)
+
         # Initialize adapters
         storage = LocalStorageAdapter(
             base_path=project_root / config.get("storage_path", ".specwiz")
@@ -101,6 +149,9 @@ def prd(
     product: str = typer.Option(..., help="Product name"),
     feature: str = typer.Option(None, help="Feature to document"),
     repo: str = typer.Option(".", help="Repository path"),
+    sources: Optional[List[str]] = typer.Option(
+        None, "--sources", help="Extra source files or directories to inject (repeatable)"
+    ),
 ) -> None:
     """Generate a Product Requirements Document."""
     project_root = Path(repo).resolve()
@@ -111,6 +162,7 @@ def prd(
             "PRD",
             project_root,
             config,
+            source_paths=sources or [],
             product_name=product,
             feature_name=feature,
         )
@@ -125,6 +177,9 @@ def user_guide(
     feature: str = typer.Option(None, help="Feature to document"),
     audience: str = typer.Option("general", help="Target audience"),
     repo: str = typer.Option(".", help="Repository path"),
+    sources: Optional[List[str]] = typer.Option(
+        None, "--sources", help="Extra source files or directories to inject (repeatable)"
+    ),
 ) -> None:
     """Generate a user guide."""
     project_root = Path(repo).resolve()
@@ -135,6 +190,7 @@ def user_guide(
             "User Guide",
             project_root,
             config,
+            source_paths=sources or [],
             product_name=product,
             feature_name=feature,
             target_audience=audience,
@@ -149,6 +205,9 @@ def release_notes(
     product: str = typer.Option(..., help="Product name"),
     version: str = typer.Option(..., help="Release version"),
     repo: str = typer.Option(".", help="Repository path"),
+    sources: Optional[List[str]] = typer.Option(
+        None, "--sources", help="Extra source files or directories to inject (repeatable)"
+    ),
 ) -> None:
     """Generate release notes."""
     project_root = Path(repo).resolve()
@@ -159,6 +218,7 @@ def release_notes(
             "Release Notes",
             project_root,
             config,
+            source_paths=sources or [],
             product_name=product,
             version=version,
         )

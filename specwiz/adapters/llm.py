@@ -61,7 +61,7 @@ class AnthropicAdapter(LLMAdapter):
             max_tokens=max_tokens,
             temperature=temperature,
             system=system or "",
-            messages=messages,
+            messages=messages,  # type: ignore[arg-type]
             **kwargs,
         )
 
@@ -107,7 +107,7 @@ class AnthropicAdapter(LLMAdapter):
             max_tokens=max_tokens,
             temperature=temperature,
             system=system or "",
-            messages=messages,
+            messages=messages,  # type: ignore[arg-type]
             **kwargs,
         ) as stream:
             for text in stream.text_stream:

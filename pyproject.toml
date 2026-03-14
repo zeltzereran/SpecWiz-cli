@@ -116,6 +116,10 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "specwiz.adapters.llm"
+disable_error_code = ["unused-ignore"]
+
 [tool.pytest.ini_options]
 minversion = "7.0"
 testpaths = ["tests"]

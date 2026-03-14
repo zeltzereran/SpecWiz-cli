@@ -3,8 +3,10 @@
 import tempfile
 from pathlib import Path
 
+import pytest
 from typer.testing import CliRunner
 
+from specwiz.cli.commands.generate import _load_sources
 from specwiz.cli.main import app
 
 runner = CliRunner()
@@ -204,6 +206,82 @@ def test_cli_missing_required_option():
 
     # Should fail with missing required arguments
     assert result.exit_code != 0
+
+
+# ---------------------------------------------------------------------------
+# _load_sources tests
+# ---------------------------------------------------------------------------
+
+
+def test_load_sources_single_file():
+    """File content is returned with a header."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        f = Path(tmpdir) / "notes.md"
+        f.write_text("hello world")
+        result = _load_sources([str(f)])
+        assert "--- notes.md ---" in result
+        assert "hello world" in result
+
+
+def test_load_sources_multiple_files():
+    """Multiple files are concatenated with headers."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        (Path(tmpdir) / "a.md").write_text("alpha")
+        (Path(tmpdir) / "b.md").write_text("beta")
+        result = _load_sources([str(Path(tmpdir) / "a.md"), str(Path(tmpdir) / "b.md")])
+        assert "--- a.md ---" in result
+        assert "alpha" in result
+        assert "--- b.md ---" in result
+        assert "beta" in result
+
+
+def test_load_sources_directory():
+    """All matching files in a directory are loaded."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        (Path(tmpdir) / "readme.md").write_text("readme content")
+        (Path(tmpdir) / "guide.txt").write_text("guide content")
+        (Path(tmpdir) / "image.png").write_text("binary")  # should be skipped
+        result = _load_sources([tmpdir])
+        assert "readme content" in result
+        assert "guide content" in result
+        assert "image.png" not in result
+
+
+def test_load_sources_missing_path_skipped(capsys: pytest.CaptureFixture) -> None:
+    """Non-existent paths are skipped without raising."""
+    result = _load_sources(["/nonexistent/path/file.md"])
+    assert result == ""
+
+
+def test_load_sources_empty_list():
+    """Empty input returns empty string."""
+    assert _load_sources([]) == ""
+
+
+# ---------------------------------------------------------------------------
+# --sources CLI option tests
+# ---------------------------------------------------------------------------
+
+
+def test_prd_help_includes_sources():
+    """--sources option appears in prd help output."""
+    result = runner.invoke(app, ["generate", "prd", "--help"])
+    assert result.exit_code == 0
+    assert "--sources" in result.stdout
+
+
+def test_user_guide_help_includes_sources():
+    """--sources option appears in user-guide help output."""
+    result = runner.invoke(app, ["generate", "user-guide", "--help"])
+    assert result.exit_code == 0
+    assert "--sources" in result.stdout
+
+
+def test_release_notes_help_includes_sources():
+    """--sources option appears in release-notes help output."""
+    result = runner.invoke(app, ["generate", "release-notes", "--help"])
+    assert result.exit_code == 0
+    assert "--sources" in result.stdout
 
 
 def test_cli_invalid_command():
