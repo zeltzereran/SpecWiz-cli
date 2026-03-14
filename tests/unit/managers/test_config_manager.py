@@ -52,8 +52,8 @@ project:
 def test_config_from_env_variables(temp_config_dir):
     """Test reading config from environment variables."""
     # Set env vars
-    os.environ["specwiz_LLM_API_KEY"] = "env-api-key"
-    os.environ["specwiz_LLM_MODEL"] = "claude-3-haiku-20240307"
+    os.environ["SPECWIZ_LLM_API_KEY"] = "env-api-key"
+    os.environ["SPECWIZ_LLM_MODEL"] = "claude-3-haiku-20240307"
     
     try:
         adapter = CompositeConfigAdapter(project_root=str(temp_config_dir))
@@ -63,8 +63,8 @@ def test_config_from_env_variables(temp_config_dir):
         assert isinstance(config, dict)
     finally:
         # Clean up
-        os.environ.pop("specwiz_LLM_API_KEY", None)
-        os.environ.pop("specwiz_LLM_MODEL", None)
+        os.environ.pop("SPECWIZ_LLM_API_KEY", None)
+        os.environ.pop("SPECWIZ_LLM_MODEL", None)
 
 
 def test_config_from_env_file(env_file, temp_config_dir):
@@ -94,7 +94,7 @@ def test_config_from_yaml_file(config_yaml_file, temp_config_dir):
 def test_config_priority_env_over_file(env_file, config_yaml_file, temp_config_dir):
     """Test that configuration is loaded from multiple sources."""
     # Set env var
-    os.environ["specwiz_LLM_MODEL"] = "env-model"
+    os.environ["SPECWIZ_LLM_MODEL"] = "env-model"
     
     try:
         adapter = CompositeConfigAdapter(
@@ -105,7 +105,7 @@ def test_config_priority_env_over_file(env_file, config_yaml_file, temp_config_d
         # Adapter should initialize successfully
         assert adapter is not None
     finally:
-        os.environ.pop("specwiz_LLM_MODEL", None)
+        os.environ.pop("SPECWIZ_LLM_MODEL", None)
 
 
 def test_config_get_with_default():
@@ -124,11 +124,11 @@ def test_config_all_keys():
         adapter = CompositeConfigAdapter(project_root=str(tmpdir))
         
         # Set some env vars
-        os.environ["specwiz_TEST_KEY"] = "test_value"
+        os.environ["SPECWIZ_TEST_KEY"] = "test_value"
         
         try:
             # Check adapter is initialized
             assert adapter is not None
             assert adapter.project_root is not None
         finally:
-            os.environ.pop("specwiz_TEST_KEY", None)
+            os.environ.pop("SPECWIZ_TEST_KEY", None)

@@ -90,4 +90,4 @@ mypy specwiz
 
 ## License
 
-MIT
+Apache 2.0
