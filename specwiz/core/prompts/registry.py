@@ -119,10 +119,7 @@ class PromptRegistry:
         Returns:
             List of prompts in the category
         """
-        return [
-            p for p in self._registry.values()
-            if p.category == category
-        ]
+        return [p for p in self._registry.values() if p.category == category]
 
     def all_prompts(self) -> Dict[str, PromptDefinition]:
         """Get all registered prompts.

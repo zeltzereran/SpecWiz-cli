@@ -58,13 +58,12 @@ class PromptRenderer:
             else:
                 # Use undefined behavior that leaves variables in place
                 from jinja2 import DebugUndefined
+
                 template.environment.undefined = DebugUndefined
                 return template.render(context)
         except UndefinedError as e:
             if strict:
-                raise UndefinedError(
-                    f"Undefined variable in {prompt_def.name}: {e.message}"
-                ) from e
+                raise UndefinedError(f"Undefined variable in {prompt_def.name}: {e.message}") from e
             return template.render(context)
 
     def validate_template(self, template_str: str) -> bool:

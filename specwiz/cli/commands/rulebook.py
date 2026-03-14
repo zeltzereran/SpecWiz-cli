@@ -47,7 +47,9 @@ def list(
 @rulebook_app.command()
 def create(
     name: str = typer.Option(..., help="Rulebook name"),
-    category: str = typer.Option(..., help="Rulebook category (engineering, writing, architecture, qa)"),
+    category: str = typer.Option(
+        ..., help="Rulebook category (engineering, writing, architecture, qa)"
+    ),
     repo: str = typer.Option(".", help="Repository path"),
 ) -> None:
     """Create a new rulebook."""
@@ -92,14 +94,16 @@ Document proven practices and patterns.
 
     rulebook_file.write_text(template)
 
-    console.print(Panel(
-        f"[green]✓ Rulebook created![/green]\n"
-        f"Name: [bold]{name}[/bold]\n"
-        f"Category: {category}\n"
-        f"Path: {rulebook_file.relative_to(project_root)}",
-        title="Rulebook Created",
-        expand=False,
-    ))
+    console.print(
+        Panel(
+            f"[green]✓ Rulebook created![/green]\n"
+            f"Name: [bold]{name}[/bold]\n"
+            f"Category: {category}\n"
+            f"Path: {rulebook_file.relative_to(project_root)}",
+            title="Rulebook Created",
+            expand=False,
+        )
+    )
 
 
 @rulebook_app.command()

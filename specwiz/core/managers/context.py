@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Union
 
 try:
     from git import Repo
+
     GITPYTHON_AVAILABLE = True
 except ImportError:
     GITPYTHON_AVAILABLE = False
@@ -81,10 +82,7 @@ class ContextManager:
 
             # Filter out common unimportant dirs
             ignore_dirs = {".git", ".venv", "node_modules", "__pycache__", ".pytest_cache"}
-            items = [
-                i for i in items
-                if not (i.is_dir() and i.name in ignore_dirs)
-            ]
+            items = [i for i in items if not (i.is_dir() and i.name in ignore_dirs)]
 
             for i, item in enumerate(items):
                 is_last = i == len(items) - 1
@@ -137,6 +135,7 @@ class ContextManager:
         if pyproject.exists():
             try:
                 import tomllib
+
                 content = tomllib.loads(pyproject.read_text())
                 if "project" in content:
                     proj = content["project"]
@@ -151,6 +150,7 @@ class ContextManager:
         if package_json.exists():
             try:
                 import json
+
                 content = json.loads(package_json.read_text())
                 metadata["name"] = content.get("name", "")
                 metadata["version"] = content.get("version", "")

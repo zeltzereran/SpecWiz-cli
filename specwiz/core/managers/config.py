@@ -139,12 +139,8 @@ class CompositeConfigAdapter(ConfigAdapter):
         errors: List[str] = []
 
         # Validate LLM configuration
-        if not self.get("ANTHROPIC_API_KEY") and self.get(
-            "llm_provider"
-        ) == "anthropic":
-            errors.append(
-                "ANTHROPIC_API_KEY environment variable required for Anthropic provider"
-            )
+        if not self.get("ANTHROPIC_API_KEY") and self.get("llm_provider") == "anthropic":
+            errors.append("ANTHROPIC_API_KEY environment variable required for Anthropic provider")
 
         # Validate project name if needed
         if not self.get("project_name"):

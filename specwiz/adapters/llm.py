@@ -27,8 +27,7 @@ class AnthropicAdapter(LLMAdapter):
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             raise ValueError(
-                "ANTHROPIC_API_KEY environment variable not set. "
-                "Please configure your API key."
+                "ANTHROPIC_API_KEY environment variable not set. " "Please configure your API key."
             )
 
         self.model = model

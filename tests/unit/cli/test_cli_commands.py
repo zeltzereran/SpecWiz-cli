@@ -33,10 +33,14 @@ def test_cli_version():
 def test_cli_init_command():
     """Test CLI init command."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        result = runner.invoke(app, [
-            "init",
-            "--repo", tmpdir,
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "init",
+                "--repo",
+                tmpdir,
+            ],
+        )
 
         # Command should execute (may succeed or show usage)
         assert result.exit_code in [0, 2]
@@ -45,10 +49,14 @@ def test_cli_init_command():
 def test_cli_doctor_command():
     """Test CLI doctor command."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        result = runner.invoke(app, [
-            "doctor",
-            "--repo", tmpdir,
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "doctor",
+                "--repo",
+                tmpdir,
+            ],
+        )
 
         # Doctor should check system health
         assert result.exit_code in [0, 1, 2]
@@ -56,10 +64,14 @@ def test_cli_doctor_command():
 
 def test_cli_prd_command_help():
     """Test PRD generation command help."""
-    result = runner.invoke(app, [
-        "generate", "prd",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "prd",
+            "--help",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "prd" in result.stdout.lower() or "product" in result.stdout.lower()
@@ -67,10 +79,13 @@ def test_cli_prd_command_help():
 
 def test_cli_user_guide_command_help():
     """Test user guide generation - may or may not exist as separate command."""
-    result = runner.invoke(app, [
-        "generate",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "--help",
+        ],
+    )
 
     # Generate command should exist and show help
     assert result.exit_code == 0 or "generate" in result.stdout.lower()
@@ -78,10 +93,13 @@ def test_cli_user_guide_command_help():
 
 def test_cli_release_notes_command_help():
     """Test release notes generation - may or may not exist as separate command."""
-    result = runner.invoke(app, [
-        "generate",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "--help",
+        ],
+    )
 
     # Generate command should exist and show help
     assert result.exit_code == 0 or "generate" in result.stdout.lower()
@@ -89,10 +107,14 @@ def test_cli_release_notes_command_help():
 
 def test_cli_rulebook_list_help():
     """Test rulebook list command help."""
-    result = runner.invoke(app, [
-        "rulebook", "list",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "rulebook",
+            "list",
+            "--help",
+        ],
+    )
 
     assert result.exit_code == 0
     assert "list" in result.stdout.lower() or "rulebook" in result.stdout.lower()
@@ -100,20 +122,28 @@ def test_cli_rulebook_list_help():
 
 def test_cli_rulebook_create_help():
     """Test rulebook create command help."""
-    result = runner.invoke(app, [
-        "rulebook", "create",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "rulebook",
+            "create",
+            "--help",
+        ],
+    )
 
     assert result.exit_code == 0
 
 
 def test_cli_rulebook_validate_help():
     """Test rulebook validate command help."""
-    result = runner.invoke(app, [
-        "rulebook", "validate",
-        "--help",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "rulebook",
+            "validate",
+            "--help",
+        ],
+    )
 
     assert result.exit_code == 0
 
@@ -127,10 +157,15 @@ def test_cli_rulebook_list_command():
         # Create a sample rulebook
         (rulebook_dir / "engineering.md").write_text("# Engineering Rulebook")
 
-        result = runner.invoke(app, [
-            "rulebook", "list",
-            "--repo", tmpdir,
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "rulebook",
+                "list",
+                "--repo",
+                tmpdir,
+            ],
+        )
 
         # Should list rulebooks
         assert result.exit_code in [0, 1, 2]
@@ -139,12 +174,19 @@ def test_cli_rulebook_list_command():
 def test_cli_rulebook_create_command():
     """Test creating a rulebook."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        result = runner.invoke(app, [
-            "rulebook", "create",
-            "--name", "test-rulebook",
-            "--category", "engineering",
-            "--repo", tmpdir,
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "rulebook",
+                "create",
+                "--name",
+                "test-rulebook",
+                "--category",
+                "engineering",
+                "--repo",
+                tmpdir,
+            ],
+        )
 
         # Should execute or show error
         assert result.exit_code in [0, 1, 2]
@@ -152,9 +194,13 @@ def test_cli_rulebook_create_command():
 
 def test_cli_missing_required_option():
     """Test CLI with missing required options."""
-    result = runner.invoke(app, [
-        "generate", "prd",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "generate",
+            "prd",
+        ],
+    )
 
     # Should fail with missing required arguments
     assert result.exit_code != 0
@@ -170,10 +216,13 @@ def test_cli_invalid_command():
 
 def test_cli_with_verbose_flag():
     """Test CLI with verbose output flag."""
-    result = runner.invoke(app, [
-        "--help",
-        "init",
-    ])
+    result = runner.invoke(
+        app,
+        [
+            "--help",
+            "init",
+        ],
+    )
 
     # Should work even with reordered flags
     assert result.exit_code in [0, 2]
@@ -196,10 +245,14 @@ def test_cli_error_handling():
     """Test CLI error handling."""
     with tempfile.TemporaryDirectory() as tmpdir:
         # Try to run doctor on empty dir
-        result = runner.invoke(app, [
-            "doctor",
-            "--repo", tmpdir,
-        ])
+        result = runner.invoke(
+            app,
+            [
+                "doctor",
+                "--repo",
+                tmpdir,
+            ],
+        )
 
         # Should handle gracefully (may show errors but not crash)
         assert isinstance(result.exit_code, int)
@@ -219,16 +272,24 @@ def test_cli_command_isolation():
     with tempfile.TemporaryDirectory() as tmpdir1:
         with tempfile.TemporaryDirectory() as tmpdir2:
             # Run init in tmpdir1
-            result1 = runner.invoke(app, [
-                "init",
-                "--repo", tmpdir1,
-            ])
+            result1 = runner.invoke(
+                app,
+                [
+                    "init",
+                    "--repo",
+                    tmpdir1,
+                ],
+            )
 
             # Run init in tmpdir2
-            result2 = runner.invoke(app, [
-                "init",
-                "--repo", tmpdir2,
-            ])
+            result2 = runner.invoke(
+                app,
+                [
+                    "init",
+                    "--repo",
+                    tmpdir2,
+                ],
+            )
 
             # Both should execute independently
             assert result1.exit_code in [0, 1, 2]

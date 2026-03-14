@@ -76,13 +76,15 @@ async def _execute_generation(
             progress.update(task, completed=True)
 
         if result.success:
-            console.print(Panel(
-                f"[green]✓ {doc_type} generated successfully![/green]\n"
-                f"Artifacts: {len(result.artifacts)}\n"
-                f"Output: {config.get('storage_path')}",
-                title="Generation Complete",
-                expand=False,
-            ))
+            console.print(
+                Panel(
+                    f"[green]✓ {doc_type} generated successfully![/green]\n"
+                    f"Artifacts: {len(result.artifacts)}\n"
+                    f"Output: {config.get('storage_path')}",
+                    title="Generation Complete",
+                    expand=False,
+                )
+            )
             return True
         else:
             console.print(f"[red]Error: {result.error}[/red]")
@@ -103,13 +105,15 @@ def prd(
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
 
-    success = asyncio.run(_execute_generation(
-        "PRD",
-        project_root,
-        config,
-        product_name=product,
-        feature_name=feature,
-    ))
+    success = asyncio.run(
+        _execute_generation(
+            "PRD",
+            project_root,
+            config,
+            product_name=product,
+            feature_name=feature,
+        )
+    )
 
     sys.exit(0 if success else 1)
 
@@ -125,14 +129,16 @@ def user_guide(
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
 
-    success = asyncio.run(_execute_generation(
-        "User Guide",
-        project_root,
-        config,
-        product_name=product,
-        feature_name=feature,
-        target_audience=audience,
-    ))
+    success = asyncio.run(
+        _execute_generation(
+            "User Guide",
+            project_root,
+            config,
+            product_name=product,
+            feature_name=feature,
+            target_audience=audience,
+        )
+    )
 
     sys.exit(0 if success else 1)
 
@@ -147,12 +153,14 @@ def release_notes(
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
 
-    success = asyncio.run(_execute_generation(
-        "Release Notes",
-        project_root,
-        config,
-        product_name=product,
-        version=version,
-    ))
+    success = asyncio.run(
+        _execute_generation(
+            "Release Notes",
+            project_root,
+            config,
+            product_name=product,
+            version=version,
+        )
+    )
 
     sys.exit(0 if success else 1)

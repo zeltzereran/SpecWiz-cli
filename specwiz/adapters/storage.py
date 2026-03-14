@@ -113,6 +113,7 @@ class LocalStorageAdapter(StorageAdapter):
         if meta_path.exists():
             try:
                 import json
+
                 meta_data = json.loads(meta_path.read_text())
                 # If metadata indicates binary, load as binary
                 artifact_type = meta_data.get("artifact_type", "")

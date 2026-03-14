@@ -20,21 +20,17 @@ app = typer.Typer(
 console = Console()
 
 # Add command groups
-app.add_typer(generate_app, name="generate", help="Generate documents (PRD, user guide, release notes)")
+app.add_typer(
+    generate_app, name="generate", help="Generate documents (PRD, user guide, release notes)"
+)
 app.add_typer(rulebook_app, name="rulebook", help="Manage documentation rulebooks")
 
 
 @app.command()
 def init(
     product: str = typer.Option(..., help="Product name"),
-    repo: str = typer.Option(
-        default=".",
-        help="Path to product repository"
-    ),
-    output: str = typer.Option(
-        default=".specwiz",
-        help="Output directory for generated artifacts"
-    ),
+    repo: str = typer.Option(default=".", help="Path to product repository"),
+    output: str = typer.Option(default=".specwiz", help="Output directory for generated artifacts"),
 ) -> None:
     """Initialize a new SpecWiz project."""
     from rich.panel import Panel
@@ -63,15 +59,17 @@ llm_provider: anthropic
         config_file = repo_path / "specwiz.yaml"
         config_file.write_text(config_content)
 
-        console.print(Panel(
-            f"[green]✓ Project initialized![/green]\n"
-            f"Product: [bold]{product}[/bold]\n"
-            f"Repository: {repo_path}\n"
-            f"Output: {output_path}\n"
-            f"Config: {config_file}",
-            title="SpecWiz Init",
-            expand=False,
-        ))
+        console.print(
+            Panel(
+                f"[green]✓ Project initialized![/green]\n"
+                f"Product: [bold]{product}[/bold]\n"
+                f"Repository: {repo_path}\n"
+                f"Output: {output_path}\n"
+                f"Config: {config_file}",
+                title="SpecWiz Init",
+                expand=False,
+            )
+        )
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
@@ -111,6 +109,7 @@ def doctor() -> None:
     # Check API connectivity
     try:
         import os
+
         if os.getenv("ANTHROPIC_API_KEY"):
             table.add_row("Anthropic API", "✓", "Key configured")
         else:
@@ -145,6 +144,7 @@ def version_callback(
     """Display version information."""
     if version:
         from specwiz import __version__
+
         console.print(f"SpecWiz v{__version__}")
         raise typer.Exit(code=0)
 

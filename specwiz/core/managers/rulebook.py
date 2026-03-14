@@ -148,16 +148,19 @@ class RulebookManager:
 
         try:
             import asyncio
-            asyncio.run(self.storage.save(
-                path=f"rulebooks/{rulebook.category}/{rulebook.name}.md",
-                content=rulebook.content,
-                artifact_type="rulebook",
-                metadata={
-                    "name": rulebook.name,
-                    "category": rulebook.category,
-                    "version": rulebook.version,
-                },
-            ))
+
+            asyncio.run(
+                self.storage.save(
+                    path=f"rulebooks/{rulebook.category}/{rulebook.name}.md",
+                    content=rulebook.content,
+                    artifact_type="rulebook",
+                    metadata={
+                        "name": rulebook.name,
+                        "category": rulebook.category,
+                        "version": rulebook.version,
+                    },
+                )
+            )
             return True
         except Exception:
             return False

@@ -16,7 +16,8 @@ def sample_repo():
         repo_path = Path(tmpdir)
 
         # Create README
-        (repo_path / "README.md").write_text("""
+        (repo_path / "README.md").write_text(
+            """
 # Sample Project
 
 This is a sample documentation project.
@@ -29,7 +30,8 @@ This is a sample documentation project.
 1. Clone the repo
 2. Install dependencies
 3. Run the application
-""")
+"""
+        )
 
         # Create basic structure
         src_dir = repo_path / "src"
@@ -37,11 +39,15 @@ This is a sample documentation project.
         (src_dir / "main.py").write_text("def main():\n    pass")
 
         # Create config
-        (repo_path / "config.json").write_text(json.dumps({
-            "name": "sample-project",
-            "version": "1.0.0",
-            "description": "A sample project",
-        }))
+        (repo_path / "config.json").write_text(
+            json.dumps(
+                {
+                    "name": "sample-project",
+                    "version": "1.0.0",
+                    "description": "A sample project",
+                }
+            )
+        )
 
         yield repo_path
 

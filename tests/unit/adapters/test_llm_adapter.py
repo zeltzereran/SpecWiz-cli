@@ -20,6 +20,7 @@ async def test_anthropic_adapter_initialization():
     """Test AnthropicAdapter initialization."""
     # Set API key for test
     import os
+
     os.environ["ANTHROPIC_API_KEY"] = "test-key"
 
     try:
@@ -34,13 +35,14 @@ async def test_anthropic_adapter_complete():
     """Test that complete method is async and callable."""
     import asyncio
     import os
+
     os.environ["ANTHROPIC_API_KEY"] = "test-key"
 
     try:
         adapter = AnthropicAdapter(model="claude-3-opus-20240229")
 
         # Verify the method exists and is awaitable
-        assert hasattr(adapter, 'complete')
+        assert hasattr(adapter, "complete")
         assert asyncio.iscoroutinefunction(adapter.complete)
 
         # Mock the entire async_client at the instance level
@@ -74,12 +76,13 @@ async def test_anthropic_adapter_complete():
 async def test_anthropic_adapter_complete_async():
     """Test asynchronous completion."""
     import os
+
     os.environ["ANTHROPIC_API_KEY"] = "test-key"
 
     try:
         adapter = AnthropicAdapter(model="claude-3-opus-20240229")
 
-        with patch.object(adapter, 'async_client') as mock_client:
+        with patch.object(adapter, "async_client") as mock_client:
             # Mock the response
             mock_message = MagicMock()
             mock_message.content = [MagicMock(text="Generated async response")]
@@ -109,6 +112,7 @@ async def test_anthropic_adapter_complete_async():
 async def test_anthropic_adapter_stream():
     """Test streaming completion."""
     import os
+
     os.environ["ANTHROPIC_API_KEY"] = "test-key"
 
     try:
@@ -122,7 +126,7 @@ async def test_anthropic_adapter_stream():
         )
 
         # Verify we get an async generator
-        assert hasattr(gen, '__aiter__') or hasattr(gen, '__iter__')
+        assert hasattr(gen, "__aiter__") or hasattr(gen, "__iter__")
     finally:
         os.environ.pop("ANTHROPIC_API_KEY", None)
 
@@ -131,12 +135,11 @@ async def test_anthropic_adapter_stream():
 async def test_anthropic_adapter_with_custom_model():
     """Test adapter with different model."""
     import os
+
     os.environ["ANTHROPIC_API_KEY"] = "test-key"
 
     try:
-        adapter = AnthropicAdapter(
-            model="claude-3-sonnet-20240229"
-        )
+        adapter = AnthropicAdapter(model="claude-3-sonnet-20240229")
         assert adapter.model == "claude-3-sonnet-20240229"
     finally:
         os.environ.pop("ANTHROPIC_API_KEY", None)

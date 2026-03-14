@@ -17,7 +17,9 @@ def rulebooks_dir():
         # Create sample rulebooks
         engineering_dir = rulebooks_path / "engineering"
         engineering_dir.mkdir()
-        (engineering_dir / "engineering.md").write_text("# Engineering Rulebook\nDefine engineering standards...")
+        (engineering_dir / "engineering.md").write_text(
+            "# Engineering Rulebook\nDefine engineering standards..."
+        )
 
         writing_dir = rulebooks_path / "writing"
         writing_dir.mkdir()
@@ -85,7 +87,8 @@ def test_rulebook_manager_validate_structure(rulebooks_dir):
 
     # Create a well-formed rulebook
     test_rulebook = rulebooks_dir / "test.md"
-    test_rulebook.write_text("""
+    test_rulebook.write_text(
+        """
 # Test Rulebook
 
 ## Purpose
@@ -98,7 +101,8 @@ This is a test rulebook for validation.
 ## Rules
 - Rule 1: First rule
 - Rule 2: Second rule
-""")
+"""
+    )
 
     content = test_rulebook.read_text()
 
@@ -139,10 +143,13 @@ def test_rulebook_manager_detect_changes():
 
         # Detect differences
         import difflib
-        diff = list(difflib.unified_diff(
-            metadata1.content.splitlines(keepends=True),
-            metadata2.content.splitlines(keepends=True),
-        ))
+
+        diff = list(
+            difflib.unified_diff(
+                metadata1.content.splitlines(keepends=True),
+                metadata2.content.splitlines(keepends=True),
+            )
+        )
 
         assert len(diff) > 0  # Should have differences
 
@@ -185,10 +192,7 @@ def test_rulebook_versioning():
         assert len(versions) == 3
 
         # Parse versions
-        version_numbers = [
-            f.stem.replace("rulebook-v", "").replace(".md", "")
-            for f in versions
-        ]
+        version_numbers = [f.stem.replace("rulebook-v", "").replace(".md", "") for f in versions]
         assert "1.0.0" in version_numbers
         assert "1.1.0" in version_numbers
         assert "2.0.0" in version_numbers

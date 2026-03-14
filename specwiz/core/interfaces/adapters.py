@@ -153,8 +153,6 @@ class EventBusAdapter(ABC):
         pass
 
     @abstractmethod
-    def publish(
-        self, event_type: str, **data: Any
-    ) -> None:
+    def publish(self, event_type: str, **data: Any) -> None:
         """Publish event."""
         pass
