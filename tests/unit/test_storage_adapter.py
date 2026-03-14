@@ -4,7 +4,7 @@ import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from docforge.adapters.storage import LocalStorageAdapter
+from specwiz.adapters.storage import LocalStorageAdapter
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def temp_storage():
 @pytest.mark.asyncio
 async def test_save_and_load_text(temp_storage):
     """Test saving and loading text artifacts."""
-    content = "Hello, DocForge!"
+    content = "Hello, SpecWiz!"
     
     # Save
     artifact = await temp_storage.save(

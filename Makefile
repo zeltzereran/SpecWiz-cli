@@ -1,7 +1,7 @@
 .PHONY: help install install-dev test lint format type-check clean
 
 help:
-	@echo "DocForge Development Commands"
+	@echo "SpecWiz Development Commands"
 	@echo "============================="
 	@echo "make install         - Install package in editable mode"
 	@echo "make install-dev     - Install with dev dependencies"

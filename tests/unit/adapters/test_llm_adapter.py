@@ -3,8 +3,8 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from docforge.adapters.llm import AnthropicAdapter
-from docforge.core.interfaces.adapters import LLMResponse
+from specwiz.adapters.llm import AnthropicAdapter
+from specwiz.core.interfaces.adapters import LLMResponse
 
 
 @pytest.fixture

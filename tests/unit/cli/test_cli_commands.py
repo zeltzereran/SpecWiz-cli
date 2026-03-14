@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock, AsyncMock
 
 from typer.testing import CliRunner
-from docforge.cli.main import app
+from specwiz.cli.main import app
 
 
 runner = CliRunner()

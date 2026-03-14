@@ -1,1 +1,1 @@
-"""Test suite for DocForge."""
+"""Test suite for SpecWiz."""

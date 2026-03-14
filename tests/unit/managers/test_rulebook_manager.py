@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 import yaml
 
-from docforge.core.managers.rulebook import RulebookManager, RulebookMetadata
+from specwiz.core.managers.rulebook import RulebookManager, RulebookMetadata
 
 
 @pytest.fixture

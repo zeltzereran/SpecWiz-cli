@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 import json
 
-from docforge.core.managers.context import ContextManager, ContextFile
+from specwiz.core.managers.context import ContextManager, ContextFile
 
 
 @pytest.fixture

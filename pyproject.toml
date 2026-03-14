@@ -3,14 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "docforge-cli"
+name = "specwiz-cli"
 version = "0.1.0"
 description = "Documentation generation platform with versioned rulebooks and structured prompts"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "DocForge Team"}
+    {name = "SpecWiz Team"}
 ]
 keywords = ["documentation", "ai", "cli", "generation", "prd", "user-guide", "release-notes"]
 
@@ -54,10 +54,10 @@ dev = [
 ]
 
 [project.scripts]
-docforge = "docforge.cli.main:app"
+specwiz = "specwiz.cli.main:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["docforge"]
+packages = ["specwiz"]
 
 [tool.black]
 line-length = 100
@@ -117,4 +117,4 @@ ignore_missing_imports = true
 minversion = "7.0"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
-addopts = "-v --cov=docforge --cov-report=term-missing --cov-report=html"
+addopts = "-v --cov=specwiz --cov-report=term-missing --cov-report=html"

@@ -134,7 +134,7 @@ dmypy.json
 Thumbs.db
 
 # Project-specific
-.docforge/
+.specwiz/
 /generated
 /rulebooks
 /product-context

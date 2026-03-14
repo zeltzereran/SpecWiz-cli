@@ -1,6 +1,6 @@
-# DocForge CLI - Quick Start Guide
+# SpecWiz CLI - Quick Start Guide
 
-Welcome to DocForge! This guide will get you up and running in minutes.
+Welcome to SpecWiz! This guide will get you up and running in minutes.
 
 ## Installation
 
@@ -13,8 +13,8 @@ Welcome to DocForge! This guide will get you up and running in minutes.
 ### Install from Source
 
 ```bash
-git clone https://github.com/your-org/DocForge-cli.git
-cd DocForge-cli
+git clone https://github.com/your-org/SpecWiz-cli.git
+cd SpecWiz-cli
 pip install -e .
 ```
 
@@ -37,26 +37,26 @@ Or create a `.env` file in your project:
 ```bash
 # .env
 ANTHROPIC_API_KEY=sk-ant-...
-DOCFORGE_PROJECT_NAME=MyProduct
-DOCFORGE_STORAGE_PATH=.docforge
+SPECWIZ_PROJECT_NAME=MyProduct
+SPECWIZ_STORAGE_PATH=.specwiz
 ```
 
 ## Initialize a Project
 
 ```bash
-docforge init --product MyProduct --repo /path/to/repo
+specwiz init --product MyProduct --repo /path/to/repo
 ```
 
 This creates:
-- `docforge.yaml` - Project configuration
-- `.docforge/` - Output directory for generated artifacts
+- `specwiz.yaml` - Project configuration
+- `.specwiz/` - Output directory for generated artifacts
 
 ## Generate Documentation
 
 ### Generate a Product Requirements Document (PRD)
 
 ```bash
-docforge generate prd \
+specwiz generate prd \
   --product MyProduct \
   --feature "New Dashboard" \
   --repo /path/to/repo
@@ -65,7 +65,7 @@ docforge generate prd \
 ### Generate a User Guide
 
 ```bash
-docforge generate user-guide \
+specwiz generate user-guide \
   --product MyProduct \
   --feature "Dashboard" \
   --audience "end-users" \
@@ -75,7 +75,7 @@ docforge generate user-guide \
 ### Generate Release Notes
 
 ```bash
-docforge generate release-notes \
+specwiz generate release-notes \
   --product MyProduct \
   --version 1.0.0 \
   --repo /path/to/repo
@@ -83,18 +83,18 @@ docforge generate release-notes \
 
 ## Manage Rulebooks
 
-Rulebooks are the heart of DocForge - they codify your organization's documentation standards.
+Rulebooks are the heart of SpecWiz - they codify your organization's documentation standards.
 
 ### Initialize Rulebooks
 
 ```bash
 # Create an engineering standards rulebook
-docforge rulebook create \
+specwiz rulebook create \
   --name engineering_standards \
   --category engineering
 
 # Create a writing guide
-docforge rulebook create \
+specwiz rulebook create \
   --name style_guide \
   --category writing
 ```
@@ -103,16 +103,16 @@ docforge rulebook create \
 
 ```bash
 # List all rulebooks
-docforge rulebook list
+specwiz rulebook list
 
 # Validate all rulebooks
-docforge rulebook validate
+specwiz rulebook validate
 ```
 
 ## Check System Health
 
 ```bash
-docforge doctor
+specwiz doctor
 ```
 
 This checks:
@@ -123,7 +123,7 @@ This checks:
 
 ## Understanding the Generation Pipeline
 
-DocForge uses a 9-stage pipeline to generate documentation:
+SpecWiz uses a 9-stage pipeline to generate documentation:
 
 **Stage 1:** Knowledge Base Generator
 - Analyzes source materials and creates a consolidated knowledge base
@@ -148,8 +148,8 @@ Each stage uses the output of previous stages as input.
 
 ```
 project_root/
-├── docforge.yaml                 # Project config
-├── .docforge/                    # Generated artifacts
+├── specwiz.yaml                 # Project config
+├── .specwiz/                    # Generated artifacts
 │   ├── knowledge_base.json
 │   ├── context/
 │   │   ├── overview.md
@@ -179,7 +179,7 @@ project_root/
 ### 1. Initialize Project
 
 ```bash
-docforge init --product Acme --repo ~/projects/acme
+specwiz init --product Acme --repo ~/projects/acme
 cd ~/projects/acme
 ```
 
@@ -188,8 +188,8 @@ cd ~/projects/acme
 Create your organization's documentation standards:
 
 ```bash
-docforge rulebook create --name engineering-standards --category engineering
-docforge rulebook create --name documentation-style --category writing
+specwiz rulebook create --name engineering-standards --category engineering
+specwiz rulebook create --name documentation-style --category writing
 ```
 
 Edit the created rulebooks to match your standards.
@@ -198,30 +198,30 @@ Edit the created rulebooks to match your standards.
 
 ```bash
 # Generate PRD for a new feature
-docforge generate prd --product Acme --feature "User Analytics"
+specwiz generate prd --product Acme --feature "User Analytics"
 
 # Generate user guide
-docforge generate user-guide --product Acme --feature "User Analytics" --audience developers
+specwiz generate user-guide --product Acme --feature "User Analytics" --audience developers
 
 # Generate release notes (after release)
-docforge generate release-notes --product Acme --version 2.0.0
+specwiz generate release-notes --product Acme --version 2.0.0
 ```
 
 ### 4. Review and Edit
 
-The generated documents are in `.docforge/generated/`. Review them, make any necessary adjustments, and commit to your repository.
+The generated documents are in `.specwiz/generated/`. Review them, make any necessary adjustments, and commit to your repository.
 
 ## Environment Variables
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
 | `ANTHROPIC_API_KEY` | Anthropic Claude API key | Required |
-| `DOCFORGE_PROJECT_NAME` | Project name | "" |
-| `DOCFORGE_PROJECT_ROOT` | Project root directory | Current dir |
-| `DOCFORGE_STORAGE_PATH` | Artifact storage path | `.docforge` |
-| `DOCFORGE_LLM_MODEL` | Claude model to use | `claude-3-opus-20240229` |
-| `DOCFORGE_TEMPERATURE` | LLM temperature (0-1) | `0.7` |
-| `DOCFORGE_MAX_TOKENS` | Max tokens per response | `4096` |
+| `SPECWIZ_PROJECT_NAME` | Project name | "" |
+| `SPECWIZ_PROJECT_ROOT` | Project root directory | Current dir |
+| `SPECWIZ_STORAGE_PATH` | Artifact storage path | `.specwiz` |
+| `SPECWIZ_LLM_MODEL` | Claude model to use | `claude-3-opus-20240229` |
+| `SPECWIZ_TEMPERATURE` | LLM temperature (0-1) | `0.7` |
+| `SPECWIZ_MAX_TOKENS` | Max tokens per response | `4096` |
 
 ## Troubleshooting
 
@@ -236,7 +236,7 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 Run health check:
 
 ```bash
-docforge doctor
+specwiz doctor
 ```
 
 This shows configuration issues and adapter status.
@@ -250,16 +250,16 @@ Ensure your repository has:
 
 ## Next Steps
 
-- Read the [Architecture Guide](DocForge_SAD.md) for system design
-- Review the [Product Specification](DocForge_CLI_PRD.md) for feature details
-- Check the [Execution Plan](DocForge_Execution_Plan.md) for implementation roadmap
+- Read the [Architecture Guide](SpecWiz_SAD.md) for system design
+- Review the [Product Specification](SpecWiz_CLI_PRD.md) for feature details
+- Check the [Execution Plan](SpecWiz_Execution_Plan.md) for implementation roadmap
 
 ## Support
 
 For issues or questions:
 - Check the [README](README.md)
-- Run `docforge doctor` to diagnose problems
-- Review generated artifacts in `.docforge/`
+- Run `specwiz doctor` to diagnose problems
+- Review generated artifacts in `.specwiz/`
 
 ## License
 

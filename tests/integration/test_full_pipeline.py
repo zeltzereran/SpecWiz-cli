@@ -5,10 +5,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import AsyncMock, MagicMock
 
-from docforge.adapters import BlinkerEventBusAdapter, LocalStorageAdapter
-from docforge.core import DocForgePipelineEngine
-from docforge.core.interfaces.engine import ExecutionContext
-from docforge.core.prompts import PromptRegistry
+from specwiz.adapters import BlinkerEventBusAdapter, LocalStorageAdapter
+from specwiz.core import SpecWizPipelineEngine
+from specwiz.core.interfaces.engine import ExecutionContext
+from specwiz.core.prompts import PromptRegistry
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ async def test_pipeline_initialization(temp_dir, mock_llm):
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
     
-    engine = DocForgePipelineEngine(
+    engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
@@ -55,7 +55,7 @@ async def test_pipeline_execution(temp_dir, mock_llm):
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
     
-    engine = DocForgePipelineEngine(
+    engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
@@ -98,7 +98,7 @@ async def test_event_bus_publishing(temp_dir, mock_llm):
     
     event_bus.subscribe("pipeline.start", event_handler)
     
-    engine = DocForgePipelineEngine(
+    engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
@@ -130,7 +130,7 @@ async def test_artifact_storage(temp_dir, mock_llm):
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
     
-    engine = DocForgePipelineEngine(
+    engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,

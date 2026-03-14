@@ -24,10 +24,10 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check docforge tests
+        run: ruff check specwiz tests
 
       - name: Format check with black
-        run: black --check docforge tests
+        run: black --check specwiz tests
 
       - name: Type check with mypy
-        run: mypy docforge
+        run: mypy specwiz

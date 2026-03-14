@@ -1,10 +1,10 @@
-# DocForge CLI
+# SpecWiz CLI
 
 A documentation generation platform that treats organizational documentation standards as first-class, versioned artifacts.
 
 ## Vision
 
-Make documentation generation as repeatable and trustworthy as running a test suite. Instead of manually copying prompts into an LLM, teams codify their documentation standards as versioned rulebooks and run DocForge CLI to generate PRDs, user guides, and release notes automatically.
+Make documentation generation as repeatable and trustworthy as running a test suite. Instead of manually copying prompts into an LLM, teams codify their documentation standards as versioned rulebooks and run SpecWiz CLI to generate PRDs, user guides, and release notes automatically.
 
 ## Quick Start
 
@@ -13,21 +13,21 @@ Make documentation generation as repeatable and trustworthy as running a test su
 pip install -e .
 
 # Initialize a new project
-docforge init --product MyProduct --repo /path/to/repo
+specwiz init --product MyProduct --repo /path/to/repo
 
 # Generate a PRD
-docforge generate prd --product MyProduct --feature "New Dashboard"
+specwiz generate prd --product MyProduct --feature "New Dashboard"
 
 # Generate a user guide
-docforge generate user-guide --product MyProduct --feature "Dashboard"
+specwiz generate user-guide --product MyProduct --feature "Dashboard"
 
 # Generate release notes
-docforge generate release-notes --product MyProduct --version 1.0.0
+specwiz generate release-notes --product MyProduct --version 1.0.0
 ```
 
 ## Architecture
 
-DocForge follows a **hexagonal architecture**:
+SpecWiz follows a **hexagonal architecture**:
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -36,7 +36,7 @@ DocForge follows a **hexagonal architecture**:
 └──────────────────┬──────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────┐
-│ docforge-core Library (Pure Python)         │
+│ specwiz-core Library (Pure Python)         │
 │ ├─ PipelineEngine (orchestrator)            │
 │ ├─ PromptTemplateLayer (Jinja2)             │
 │ ├─ RulebookManager (load/validate)          │
@@ -71,22 +71,22 @@ pip install -e ".[dev]"
 pytest
 
 # Run linting
-ruff check docforge tests
-black --check docforge tests
+ruff check specwiz tests
+black --check specwiz tests
 
 # Fix linting
-black docforge tests
-ruff check --fix docforge tests
+black specwiz tests
+ruff check --fix specwiz tests
 
 # Type checking
-mypy docforge
+mypy specwiz
 ```
 
 ## Documentation
 
-- [Product Specification](DocForge_CLI_PRD.md)
-- [System Architecture](DocForge_SAD.md)
-- [Execution Plan](DocForge_Execution_Plan.md)
+- [Product Specification](SpecWiz_CLI_PRD.md)
+- [System Architecture](SpecWiz_SAD.md)
+- [Execution Plan](SpecWiz_Execution_Plan.md)
 
 ## License
 

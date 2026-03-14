@@ -1,12 +1,12 @@
-# DocForge Development Guide
+# SpecWiz Development Guide
 
-This guide is for developers working on the DocForge CLI codebase.
+This guide is for developers working on the SpecWiz CLI codebase.
 
 ## Project Structure
 
 ```
-docforge-cli/
-├── docforge/                        # Main package
+specwiz-cli/
+├── specwiz/                        # Main package
 │   ├── __init__.py
 │   ├── exceptions.py                # Custom exceptions
 │   ├── core/                        # Core library (no CLI deps)
@@ -80,7 +80,7 @@ This allows:
 All adapters are injected into the engine:
 
 ```python
-engine = DocForgePipelineEngine(
+engine = SpecWizPipelineEngine(
     storage=LocalStorageAdapter(),
     llm=AnthropicAdapter(),
     event_bus=BlinkerEventBusAdapter(),
@@ -121,18 +121,18 @@ At each phase, the system is runnable and testable.
 ```bash
 # Clone and install
 git clone <repo>
-cd DocForge-cli
+cd specwiz-cli
 pip install -e ".[dev]"
 
 # Verify setup
-docforge doctor
+specwiz doctor
 ```
 
 ### 2. Make Changes
 
 ```bash
 # Edit code
-vim docforge/core/engine.py
+vim specwiz/core/engine.py
 
 # Run tests
 make test-fast
@@ -152,7 +152,7 @@ pytest tests/unit/ -v
 pytest tests/integration/ -v
 
 # All tests with coverage
-pytest --cov=docforge
+pytest --cov=specwiz
 
 # Watch for changes
 pytest-watch
@@ -162,13 +162,13 @@ pytest-watch
 
 ```bash
 # Format code
-black docforge tests
+black specwiz tests
 
 # Lint
-ruff check --fix docforge tests
+ruff check --fix specwiz tests
 
 # Type checking
-mypy docforge
+mypy specwiz
 
 # All at once
 make lint format type-check
@@ -189,8 +189,8 @@ Example: Add S3 storage adapter.
 ### 1. Create Adapter Implementation
 
 ```python
-# docforge/adapters/s3.py
-from docforge.core.interfaces.adapters import StorageAdapter
+# specwiz/adapters/s3.py
+from specwiz.core.interfaces.adapters import StorageAdapter
 
 class S3StorageAdapter(StorageAdapter):
     async def save(self, path, content, artifact_type, metadata=None):
@@ -205,8 +205,8 @@ class S3StorageAdapter(StorageAdapter):
 ### 2. Export from Package
 
 ```python
-# docforge/adapters/__init__.py
-from docforge.adapters.s3 import S3StorageAdapter
+# specwiz/adapters/__init__.py
+from specwiz.adapters.s3 import S3StorageAdapter
 
 __all__ = ["S3StorageAdapter", ...]
 ```
@@ -224,19 +224,19 @@ async def test_s3_save(s3_adapter):
 ### 4. Update CLI if Needed
 
 ```python
-# docforge/cli/main.py
+# specwiz/cli/main.py
 if config.get("storage_backend") == "s3":
     storage = S3StorageAdapter(bucket=...)
 ```
 
 ## Adding a New Command
 
-Example: Add `docforge analyze` command.
+Example: Add `specwiz analyze` command.
 
 ### 1. Create Command Module
 
 ```python
-# docforge/cli/commands/analyze.py
+# specwiz/cli/commands/analyze.py
 import typer
 from rich.console import Console
 
@@ -252,8 +252,8 @@ def diff(file1: str, file2: str):
 ### 2. Register with Main App
 
 ```python
-# docforge/cli/main.py
-from docforge.cli.commands.analyze import analyze_app
+# specwiz/cli/main.py
+from specwiz.cli.commands.analyze import analyze_app
 
 app.add_typer(analyze_app, name="analyze")
 ```
@@ -261,7 +261,7 @@ app.add_typer(analyze_app, name="analyze")
 ### 3. Test the Command
 
 ```bash
-docforge analyze diff file1.md file2.md
+specwiz analyze diff file1.md file2.md
 ```
 
 ## Adding a New Prompt
@@ -271,18 +271,18 @@ Example: Add custom diagram generator prompt.
 ### 1. Create Prompt Directory
 
 ```bash
-mkdir -p docforge/prompts/diagram_generator
+mkdir -p specwiz/prompts/diagram_generator
 ```
 
 ### 2. Create Metadata
 
 ```yaml
-# docforge/prompts/diagram_generator/metadata.yaml
+# specwiz/prompts/diagram_generator/metadata.yaml
 name: diagram_generator
 description: Generates draw.io diagrams from descriptions
 version: 1.0
 category: document
-template_path: docforge/prompts/diagram_generator
+template_path: specwiz/prompts/diagram_generator
 requires:
   - product_context_generator
 ```
@@ -290,7 +290,7 @@ requires:
 ### 3. Create Template
 
 ```markdown
-# docforge/prompts/diagram_generator/template.md
+# specwiz/prompts/diagram_generator/template.md
 Generate a draw.io diagram for: {{ diagram_description }}
 
 Use the provided product context:
@@ -323,13 +323,13 @@ import pdb; pdb.set_trace()
 ### Run with Verbosity
 
 ```bash
-docforge generate prd --verbose
+specwiz generate prd --verbose
 ```
 
 ### Check System Health
 
 ```bash
-docforge doctor
+specwiz doctor
 ```
 
 ## Performance Optimization
@@ -337,14 +337,14 @@ docforge doctor
 ### Profiling
 
 ```bash
-python -m cProfile -s cumulative -m docforge generate prd --product Test
+python -m cProfile -s cumulative -m specwiz generate prd --product Test
 ```
 
 ### Memory Usage
 
 ```bash
 pip install memory_profiler
-python -m memory_profiler -m docforge generate prd --product Test
+python -m memory_profiler -m specwiz generate prd --product Test
 ```
 
 ### Async Optimization
@@ -418,7 +418,7 @@ pytest -vv --pdb tests/unit/test_name.py::test_function
 
 ```bash
 # Check specific file
-mypy docforge/core/engine.py
+mypy specwiz/core/engine.py
 
 # Ignore specific errors temporarily (mark as TODO)
 # type: ignore

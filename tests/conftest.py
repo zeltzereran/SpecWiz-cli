@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from docforge.core.interfaces import (
+from specwiz.core.interfaces import (
     ConfigAdapter,
     EventBusAdapter,
     LLMAdapter,
