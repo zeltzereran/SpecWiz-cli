@@ -5,7 +5,6 @@ Adapters are injected dependencies - the engine never instantiates them directly
 """
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
@@ -24,7 +23,7 @@ class StorageArtifact(BaseModel):
 
 class StorageAdapter(ABC):
     """Interface for persisting artifacts.
-    
+
     Implementations: LocalStorageAdapter, S3StorageAdapter (future).
     """
 
@@ -73,7 +72,7 @@ class LLMResponse(BaseModel):
 
 class LLMAdapter(ABC):
     """Interface for LLM providers.
-    
+
     Implementations: AnthropicAdapter, OllamaAdapter (future), AzureOpenAIAdapter (future).
     """
 
@@ -112,7 +111,7 @@ class ConfigSource(BaseModel):
 
 class ConfigAdapter(ABC):
     """Interface for configuration management.
-    
+
     Implementations: EnvConfigAdapter, FileConfigAdapter, CompositeConfigAdapter.
     """
 
@@ -139,7 +138,7 @@ class ConfigAdapter(ABC):
 
 class EventBusAdapter(ABC):
     """Interface for event publishing/subscription.
-    
+
     Implementations: BlinkerEventBusAdapter, AsyncIOEventBusAdapter (future).
     """
 

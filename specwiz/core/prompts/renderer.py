@@ -1,15 +1,15 @@
 """Prompt template rendering with Jinja2."""
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
-from jinja2 import Environment, Template, TemplateSyntaxError, UndefinedError
+from jinja2 import Environment, TemplateSyntaxError, UndefinedError
 
 from specwiz.core.prompts.models import PromptDefinition
 
 
 class PromptRenderer:
     """Renders prompt templates with context variables.
-    
+
     Uses Jinja2 for flexible, powerful templating.
     """
 
@@ -28,16 +28,16 @@ class PromptRenderer:
         strict: bool = False,
     ) -> str:
         """Render a prompt template with context.
-        
+
         Args:
             prompt_def: Prompt definition with template
             context: Variables to substitute into template
             strict: If True, raise on undefined variables;
                    if False, leave them as-is
-            
+
         Returns:
             Rendered prompt string
-            
+
         Raises:
             TemplateSyntaxError: If template has invalid syntax
             UndefinedError: If strict=True and undefined var referenced
@@ -50,7 +50,7 @@ class PromptRenderer:
                 e.lineno,
                 e.name,
                 e.filename,
-            )
+            ) from e
 
         try:
             if strict:
@@ -64,15 +64,15 @@ class PromptRenderer:
             if strict:
                 raise UndefinedError(
                     f"Undefined variable in {prompt_def.name}: {e.message}"
-                )
+                ) from e
             return template.render(context)
 
     def validate_template(self, template_str: str) -> bool:
         """Check if template string is valid Jinja2.
-        
+
         Args:
             template_str: Template to validate
-            
+
         Returns:
             True if template is valid, False otherwise
         """

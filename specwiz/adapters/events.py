@@ -9,7 +9,7 @@ from specwiz.core.interfaces.adapters import EventBusAdapter
 
 class BlinkerEventBusAdapter(EventBusAdapter):
     """Event bus implementation using blinker signal library.
-    
+
     Features:
     - Signal-based pub/sub
     - Type-safe event publishing
@@ -30,10 +30,10 @@ class BlinkerEventBusAdapter(EventBusAdapter):
 
     def _register_signal(self, event_type: str) -> signal:
         """Register or get a signal by type name.
-        
+
         Args:
             event_type: Unique signal name
-            
+
         Returns:
             Blinker signal object
         """
@@ -43,7 +43,7 @@ class BlinkerEventBusAdapter(EventBusAdapter):
 
     def subscribe(self, event_type: str, handler: Callable[..., Any]) -> None:
         """Subscribe to event type.
-        
+
         Args:
             event_type: Signal name to subscribe to
             handler: Callable that will be invoked when signal fires
@@ -53,7 +53,7 @@ class BlinkerEventBusAdapter(EventBusAdapter):
 
     def unsubscribe(self, event_type: str, handler: Callable[..., Any]) -> None:
         """Unsubscribe from event type.
-        
+
         Args:
             event_type: Signal name to unsubscribe from
             handler: Callable to disconnect
@@ -63,7 +63,7 @@ class BlinkerEventBusAdapter(EventBusAdapter):
 
     def publish(self, event_type: str, **data: Any) -> None:
         """Publish event to all subscribers.
-        
+
         Args:
             event_type: Signal name to fire
             **data: Keyword arguments passed to all handlers

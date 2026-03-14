@@ -17,7 +17,6 @@ from specwiz.adapters import (
 from specwiz.core import SpecWizPipelineEngine
 from specwiz.core.interfaces.engine import ExecutionContext
 from specwiz.core.managers import CompositeConfigAdapter
-from specwiz.core.prompts import PromptRegistry
 
 generate_app = typer.Typer(help="Generate documents")
 console = Console()
@@ -30,21 +29,21 @@ async def _execute_generation(
     **options,
 ) -> bool:
     """Execute document generation pipeline."""
-    
+
     try:
         # Initialize adapters
         storage = LocalStorageAdapter(
             base_path=project_root / config.get("storage_path", ".specwiz")
         )
         event_bus = BlinkerEventBusAdapter()
-        
+
         # Get or create LLM adapter
         try:
             llm = AnthropicAdapter()
         except ValueError as e:
             console.print(f"[red]Error: {e}[/red]")
             return False
-        
+
         # Initialize engine
         engine = SpecWizPipelineEngine(
             storage=storage,
@@ -52,7 +51,7 @@ async def _execute_generation(
             event_bus=event_bus,
         )
         await engine.initialize()
-        
+
         # Create execution context
         context = ExecutionContext(
             project_root=str(project_root),
@@ -61,21 +60,21 @@ async def _execute_generation(
             stage_number=0,
             inputs=options,
         )
-        
+
         # Show progress
         with Progress() as progress:
             task = progress.add_task(
                 f"[cyan]Generating {doc_type}...",
                 total=None,
             )
-            
+
             # Execute pipeline
             result = await engine.execute_pipeline(
                 start_stage="knowledge_base_generator",
                 context=context,
             )
             progress.update(task, completed=True)
-        
+
         if result.success:
             console.print(Panel(
                 f"[green]✓ {doc_type} generated successfully![/green]\n"
@@ -88,7 +87,7 @@ async def _execute_generation(
         else:
             console.print(f"[red]Error: {result.error}[/red]")
             return False
-            
+
     except Exception as e:
         console.print(f"[red]Generation failed: {e}[/red]")
         return False
@@ -103,7 +102,7 @@ def prd(
     """Generate a Product Requirements Document."""
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
-    
+
     success = asyncio.run(_execute_generation(
         "PRD",
         project_root,
@@ -111,7 +110,7 @@ def prd(
         product_name=product,
         feature_name=feature,
     ))
-    
+
     sys.exit(0 if success else 1)
 
 
@@ -125,7 +124,7 @@ def user_guide(
     """Generate a user guide."""
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
-    
+
     success = asyncio.run(_execute_generation(
         "User Guide",
         project_root,
@@ -134,7 +133,7 @@ def user_guide(
         feature_name=feature,
         target_audience=audience,
     ))
-    
+
     sys.exit(0 if success else 1)
 
 
@@ -147,7 +146,7 @@ def release_notes(
     """Generate release notes."""
     project_root = Path(repo).resolve()
     config = CompositeConfigAdapter(project_root=project_root)
-    
+
     success = asyncio.run(_execute_generation(
         "Release Notes",
         project_root,
@@ -155,5 +154,5 @@ def release_notes(
         product_name=product,
         version=version,
     ))
-    
+
     sys.exit(0 if success else 1)

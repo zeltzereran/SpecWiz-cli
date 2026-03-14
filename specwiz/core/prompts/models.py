@@ -34,15 +34,15 @@ class PromptDefinition(BaseModel):
 
     metadata: PromptMetadata
     template: str
-    
+
     @property
     def name(self) -> str:
         return self.metadata.name
-    
+
     @property
     def description(self) -> str:
         return self.metadata.description
-    
+
     @property
     def category(self) -> str:
         return self.metadata.category

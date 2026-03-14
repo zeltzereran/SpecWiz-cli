@@ -1,7 +1,6 @@
 """Core pipeline engine orchestration."""
 
-import json
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from specwiz.core.interfaces.adapters import (
     EventBusAdapter,
@@ -15,17 +14,16 @@ from specwiz.core.interfaces.engine import (
     PipelineResult,
     PipelineStage,
 )
-from specwiz.core.prompts.models import PromptDefinition
 from specwiz.core.prompts.registry import PromptRegistry
 from specwiz.core.prompts.renderer import PromptRenderer
 
 
 class SpecWizPipelineEngine(PipelineEngine):
     """Complete documentation generation pipeline orchestrator.
-    
+
     Responsibilities:
     - Load and validate prompt templates
-    - Execute prompts with injected dependencies  
+    - Execute prompts with injected dependencies
     - Manage context flow through pipeline stages
     - Validate outputs against schemas
     - Emit lifecycle events
@@ -40,7 +38,7 @@ class SpecWizPipelineEngine(PipelineEngine):
         prompt_registry: Optional[PromptRegistry] = None,
     ) -> None:
         """Initialize the pipeline engine.
-        
+
         Args:
             storage: Storage adapter for artifacts
             llm: LLM adapter for prompt completion
@@ -52,32 +50,32 @@ class SpecWizPipelineEngine(PipelineEngine):
         self.event_bus = event_bus
         self.prompt_registry = prompt_registry or PromptRegistry()
         self.renderer = PromptRenderer()
-        
+
         self._context: Optional[ExecutionContext] = None
         self._initialized = False
 
     async def initialize(self) -> None:
         """Initialize engine (load prompts, setup adapters).
-        
+
         Called before executing any pipeline stages.
         """
         # Validate LLM adapter
         # Validate storage adapter
         # Load all prompts into registry
-        
+
         self._initialized = True
         self.event_bus.publish("pipeline.initialized")
 
     async def get_stages(self) -> List[PipelineStage]:
         """Get all available pipeline stages.
-        
+
         Returns:
             List of all pipeline stages with metadata
         """
         stages: List[PipelineStage] = []
 
         prompts = self.prompt_registry.all_prompts()
-        for name, prompt_def in prompts.items():
+        for _name, prompt_def in prompts.items():
             stage = PipelineStage(
                 name=prompt_def.metadata.name,
                 description=prompt_def.metadata.description,
@@ -96,14 +94,14 @@ class SpecWizPipelineEngine(PipelineEngine):
         context: ExecutionContext,
     ) -> ArtifactResult:
         """Execute single pipeline stage.
-        
+
         Args:
             stage_name: Name of stage to execute
             context: Execution context with inputs
-            
+
         Returns:
             ArtifactResult with generated content
-            
+
         Raises:
             ValueError: If stage not found
             RuntimeError: If stage execution fails
@@ -164,7 +162,7 @@ class SpecWizPipelineEngine(PipelineEngine):
                 stage_name=stage_name,
                 error=str(e),
             )
-            raise RuntimeError(f"Stage {stage_name} failed: {e}")
+            raise RuntimeError(f"Stage {stage_name} failed: {e}") from e
 
     async def execute_pipeline(
         self,
@@ -172,13 +170,13 @@ class SpecWizPipelineEngine(PipelineEngine):
         context: ExecutionContext,
     ) -> PipelineResult:
         """Execute pipeline from specified stage onward.
-        
+
         Executes stages in order, passing outputs as inputs to next stage.
-        
+
         Args:
             start_stage: Name of first stage to execute
             context: Initial execution context
-            
+
         Returns:
             PipelineResult with all artifacts and status
         """
@@ -246,7 +244,7 @@ class SpecWizPipelineEngine(PipelineEngine):
 
     def get_context(self) -> ExecutionContext:
         """Get current execution context.
-        
+
         Returns:
             Current ExecutionContext or raises if not set
         """

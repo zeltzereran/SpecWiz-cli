@@ -1,9 +1,10 @@
 """Tests for configuration manager."""
 
 import os
-import pytest
 import tempfile
 from pathlib import Path
+
+import pytest
 
 from specwiz.core.managers.config import CompositeConfigAdapter
 
@@ -54,10 +55,10 @@ def test_config_from_env_variables(temp_config_dir):
     # Set env vars
     os.environ["SPECWIZ_LLM_API_KEY"] = "env-api-key"
     os.environ["SPECWIZ_LLM_MODEL"] = "claude-3-haiku-20240307"
-    
+
     try:
         adapter = CompositeConfigAdapter(project_root=str(temp_config_dir))
-        
+
         # Check that config can be retrieved
         config = adapter.all_config()
         assert isinstance(config, dict)
@@ -73,7 +74,7 @@ def test_config_from_env_file(env_file, temp_config_dir):
         project_root=str(temp_config_dir),
         env_file=str(env_file),
     )
-    
+
     # Check that adapter initializes without error
     assert adapter is not None
     assert adapter.project_root.resolve() == Path(temp_config_dir).resolve()
@@ -82,11 +83,11 @@ def test_config_from_env_file(env_file, temp_config_dir):
 def test_config_from_yaml_file(config_yaml_file, temp_config_dir):
     """Test reading config from specwiz.yaml file."""
     adapter = CompositeConfigAdapter(project_root=str(temp_config_dir))
-    
+
     llm_config = adapter.get("llm")
     assert llm_config["model"] == "claude-3-sonnet-20240229"
     assert llm_config["temperature"] == 0.7
-    
+
     project_config = adapter.get("project")
     assert project_config["name"] == "FileConfigProject"
 
@@ -95,13 +96,13 @@ def test_config_priority_env_over_file(env_file, config_yaml_file, temp_config_d
     """Test that configuration is loaded from multiple sources."""
     # Set env var
     os.environ["SPECWIZ_LLM_MODEL"] = "env-model"
-    
+
     try:
         adapter = CompositeConfigAdapter(
             project_root=str(temp_config_dir),
             env_file=str(env_file),
         )
-        
+
         # Adapter should initialize successfully
         assert adapter is not None
     finally:
@@ -112,7 +113,7 @@ def test_config_get_with_default():
     """Test getting config value with default fallback."""
     with tempfile.TemporaryDirectory() as tmpdir:
         adapter = CompositeConfigAdapter(project_root=str(tmpdir))
-        
+
         # Non-existent key with default
         value = adapter.get("nonexistent", default="default_value")
         assert value == "default_value"
@@ -122,10 +123,10 @@ def test_config_all_keys():
     """Test configuration functionality."""
     with tempfile.TemporaryDirectory() as tmpdir:
         adapter = CompositeConfigAdapter(project_root=str(tmpdir))
-        
+
         # Set some env vars
         os.environ["SPECWIZ_TEST_KEY"] = "test_value"
-        
+
         try:
             # Check adapter is initialized
             assert adapter is not None

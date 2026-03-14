@@ -1,6 +1,6 @@
 """Interfaces package for SpecWiz core.
 
-This package defines the abstract contracts that all adapters and 
+This package defines the abstract contracts that all adapters and
 the engine must implement.
 """
 

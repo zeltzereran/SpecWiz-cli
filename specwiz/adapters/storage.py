@@ -1,7 +1,6 @@
 """Local file system storage adapter."""
 
 import asyncio
-import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -11,7 +10,7 @@ from specwiz.core.interfaces.adapters import StorageAdapter, StorageArtifact
 
 class LocalStorageAdapter(StorageAdapter):
     """Stores artifacts in the local file system.
-    
+
     Artifacts are organized by type:
     - rulebooks/ for rulebook artifacts
     - contexts/ for product context artifacts
@@ -21,7 +20,7 @@ class LocalStorageAdapter(StorageAdapter):
 
     def __init__(self, base_path: Union[str, Path] = ".specwiz"):
         """Initialize with base storage path.
-        
+
         Args:
             base_path: Root directory for all artifacts (default: .specwiz/)
         """
@@ -30,13 +29,13 @@ class LocalStorageAdapter(StorageAdapter):
 
     def _resolve_path(self, path: str) -> Path:
         """Resolve artifact path relative to base.
-        
+
         Args:
             path: Relative or absolute path
-            
+
         Returns:
             Resolved absolute path
-            
+
         Raises:
             ValueError: If path tries to escape base directory
         """
@@ -53,13 +52,13 @@ class LocalStorageAdapter(StorageAdapter):
         metadata: Optional[Dict[str, Any]] = None,
     ) -> StorageArtifact:
         """Save artifact to disk.
-        
+
         Args:
             path: Relative path within storage
             content: File content
             artifact_type: Type of artifact (for organization)
             metadata: Optional metadata dict
-            
+
         Returns:
             StorageArtifact with metadata
         """
@@ -68,7 +67,7 @@ class LocalStorageAdapter(StorageAdapter):
 
         # Write content
         if isinstance(content, bytes):
-            async_write = asyncio.coroutine(lambda: None)  # placeholder
+            asyncio.coroutine(lambda: None)  # placeholder
             target_path.write_bytes(content)
         else:
             target_path.write_text(content, encoding="utf-8")
@@ -98,10 +97,10 @@ class LocalStorageAdapter(StorageAdapter):
 
     async def load(self, path: str) -> Union[str, bytes]:
         """Load artifact from disk.
-        
+
         Args:
             path: Relative path within storage
-            
+
         Returns:
             File content (detected as text or binary)
         """
@@ -131,10 +130,10 @@ class LocalStorageAdapter(StorageAdapter):
 
     async def exists(self, path: str) -> bool:
         """Check if artifact exists.
-        
+
         Args:
             path: Relative path within storage
-            
+
         Returns:
             True if artifact exists
         """
@@ -145,11 +144,11 @@ class LocalStorageAdapter(StorageAdapter):
         self, artifact_type: Optional[str] = None, prefix: Optional[str] = None
     ) -> List[StorageArtifact]:
         """List all artifacts, optionally filtered.
-        
+
         Args:
             artifact_type: Filter by artifact type
             prefix: Filter by path prefix
-            
+
         Returns:
             List of StorageArtifacts
         """
@@ -174,7 +173,7 @@ class LocalStorageAdapter(StorageAdapter):
 
     async def delete(self, path: str) -> None:
         """Delete artifact and its metadata.
-        
+
         Args:
             path: Relative path within storage
         """

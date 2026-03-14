@@ -1,14 +1,14 @@
 """Integration tests for the full pipeline."""
 
-import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+
 from specwiz.adapters import BlinkerEventBusAdapter, LocalStorageAdapter
 from specwiz.core import SpecWizPipelineEngine
 from specwiz.core.interfaces.engine import ExecutionContext
-from specwiz.core.prompts import PromptRegistry
 
 
 @pytest.fixture
@@ -36,15 +36,15 @@ async def test_pipeline_initialization(temp_dir, mock_llm):
     """Test pipeline engine initialization."""
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
-    
+
     engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
     )
-    
+
     await engine.initialize()
-    
+
     # Check that engine is initialized
     assert engine._initialized is True
 
@@ -54,15 +54,15 @@ async def test_pipeline_execution(temp_dir, mock_llm):
     """Test full pipeline execution."""
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
-    
+
     engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
     )
-    
+
     await engine.initialize()
-    
+
     context = ExecutionContext(
         project_root=str(temp_dir),
         project_name="TestProject",
@@ -73,13 +73,13 @@ async def test_pipeline_execution(temp_dir, mock_llm):
             "project_context": "Test project for documentation generation",
         },
     )
-    
+
     # Execute pipeline
     result = await engine.execute_pipeline(
         start_stage="knowledge_base_generator",
         context=context,
     )
-    
+
     # Check results
     assert result is not None
     assert result.artifacts is not None
@@ -90,22 +90,22 @@ async def test_event_bus_publishing(temp_dir, mock_llm):
     """Test event bus emits lifecycle events."""
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
-    
+
     events_fired = []
-    
+
     def event_handler(sender, **data):
         events_fired.append(data)
-    
+
     event_bus.subscribe("pipeline.start", event_handler)
-    
+
     engine = SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
     )
-    
+
     await engine.initialize()
-    
+
     context = ExecutionContext(
         project_root=str(temp_dir),
         project_name="TestProject",
@@ -113,13 +113,13 @@ async def test_event_bus_publishing(temp_dir, mock_llm):
         stage_number=0,
         inputs={"source_materials": "test"},
     )
-    
+
     # Execute and verify events
-    result = await engine.execute_pipeline(
+    await engine.execute_pipeline(
         start_stage="knowledge_base_generator",
         context=context,
     )
-    
+
     # At least one event should have been fired
     assert len(events_fired) >= 0  # Events fire async
 
@@ -129,13 +129,13 @@ async def test_artifact_storage(temp_dir, mock_llm):
     """Test artifacts are properly stored."""
     storage = LocalStorageAdapter(base_path=temp_dir)
     event_bus = BlinkerEventBusAdapter()
-    
-    engine = SpecWizPipelineEngine(
+
+    SpecWizPipelineEngine(
         storage=storage,
         llm=mock_llm,
         event_bus=event_bus,
     )
-    
+
     # Save an artifact directly
     artifact = await storage.save(
         path="test/document.md",
@@ -143,14 +143,14 @@ async def test_artifact_storage(temp_dir, mock_llm):
         artifact_type="document",
         metadata={"test": True},
     )
-    
+
     assert artifact.path == "test/document.md"
     assert artifact.artifact_type == "document"
-    
+
     # Verify it can be loaded
     loaded = await storage.load("test/document.md")
     assert "Test Document" in loaded
-    
+
     # Verify it exists
     exists = await storage.exists("test/document.md")
     assert exists is True
@@ -160,7 +160,7 @@ async def test_artifact_storage(temp_dir, mock_llm):
 async def test_list_artifacts(temp_dir):
     """Test listing artifacts."""
     storage = LocalStorageAdapter(base_path=temp_dir)
-    
+
     # Create multiple artifacts
     await storage.save(
         path="docs/doc1.md",
@@ -177,11 +177,11 @@ async def test_list_artifacts(temp_dir):
         content="Engineering rules",
         artifact_type="rulebook",
     )
-    
+
     # List all
     all_artifacts = await storage.list_artifacts()
     assert len(all_artifacts) == 3
-    
+
     # Filter by type
     docs = await storage.list_artifacts(artifact_type="document")
     assert len(docs) == 2

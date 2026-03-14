@@ -60,7 +60,7 @@ class PipelineResult(BaseModel):
 
 class PipelineEngine(ABC):
     """Core orchestration engine for the SpecWiz documentation generation pipeline.
-    
+
     Responsibilities:
     - Load and validate prompt templates
     - Execute prompts with injected dependencies

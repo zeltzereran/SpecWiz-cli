@@ -1,6 +1,5 @@
 """Prompt registry for discovery and loading."""
 
-import json
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -11,14 +10,14 @@ from specwiz.core.prompts.models import PromptDefinition, PromptMetadata, Prompt
 
 class PromptRegistry:
     """Central registry for prompt discovery and loading.
-    
+
     Prompts are loaded from a structured directory tree with
     metadata files and template files.
     """
 
     def __init__(self, prompts_dir: Optional[Union[str, Path]] = None) -> None:
         """Initialize registry.
-        
+
         Args:
             prompts_dir: Directory containing prompt definitions
                         (default: specwiz/prompts/)
@@ -26,7 +25,7 @@ class PromptRegistry:
         if prompts_dir is None:
             # Default: look for prompts relative to this module
             prompts_dir = Path(__file__).parent.parent.parent / "prompts"
-        
+
         self.prompts_dir = Path(prompts_dir).resolve()
         self._registry: Dict[str, PromptDefinition] = {}
         self._discover()
@@ -46,12 +45,12 @@ class PromptRegistry:
 
     def _load_prompt(self, prompt_dir: Path) -> None:
         """Load a single prompt from its directory.
-        
+
         Directory structure:
             prompt_name/
             ├── metadata.yaml
             └── template.md (or .txt, .jinja2)
-        
+
         Args:
             prompt_dir: Directory containing the prompt
         """
@@ -61,7 +60,7 @@ class PromptRegistry:
 
         # Load metadata
         metadata_data = yaml.safe_load(metadata_file.read_text())
-        
+
         # Load template (look for .md, .txt, .jinja2)
         template_content = ""
         for ext in [".md", ".txt", ".jinja2"]:
@@ -102,10 +101,10 @@ class PromptRegistry:
 
     def get(self, name: str) -> Optional[PromptDefinition]:
         """Get a prompt by name.
-        
+
         Args:
             name: Prompt name
-            
+
         Returns:
             PromptDefinition or None if not found
         """
@@ -113,10 +112,10 @@ class PromptRegistry:
 
     def list_by_category(self, category: str) -> List[PromptDefinition]:
         """List all prompts in a category.
-        
+
         Args:
             category: Category name
-            
+
         Returns:
             List of prompts in the category
         """
@@ -127,7 +126,7 @@ class PromptRegistry:
 
     def all_prompts(self) -> Dict[str, PromptDefinition]:
         """Get all registered prompts.
-        
+
         Returns:
             Dictionary of all prompts by name
         """

@@ -11,7 +11,7 @@ from specwiz.core.interfaces.adapters import ConfigAdapter, ConfigSource
 
 class CompositeConfigAdapter(ConfigAdapter):
     """Configuration adapter that merges multiple sources.
-    
+
     Priority order:
     1. Environment variables
     2. .env file (python-dotenv)
@@ -25,7 +25,7 @@ class CompositeConfigAdapter(ConfigAdapter):
         env_file: Optional[Union[str, Path]] = None,
     ):
         """Initialize composite config from multiple sources.
-        
+
         Args:
             project_root: Root directory (default: current directory)
             env_file: Path to .env file (default: .env in project root)
@@ -98,11 +98,11 @@ class CompositeConfigAdapter(ConfigAdapter):
 
     def get(self, key: str, default: Optional[Any] = None) -> Any:
         """Get config value by key.
-        
+
         Args:
             key: Configuration key
             default: Default value if not found
-            
+
         Returns:
             Configuration value or default
         """
@@ -113,10 +113,10 @@ class CompositeConfigAdapter(ConfigAdapter):
 
     def get_source(self, key: str) -> Optional[ConfigSource]:
         """Get config value with source metadata.
-        
+
         Args:
             key: Configuration key
-            
+
         Returns:
             ConfigSource with value and source info, or None
         """
@@ -132,7 +132,7 @@ class CompositeConfigAdapter(ConfigAdapter):
 
     def validate(self) -> List[str]:
         """Validate required configuration.
-        
+
         Returns:
             List of validation errors (empty if valid)
         """

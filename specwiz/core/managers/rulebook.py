@@ -2,9 +2,7 @@
 
 import difflib
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-
-import yaml
+from typing import Dict, List, Optional, Union
 
 from specwiz.core.interfaces.adapters import StorageAdapter
 
@@ -31,7 +29,7 @@ class RulebookMetadata:
 
 class RulebookManager:
     """Manages rulebook loading, validation, and comparison.
-    
+
     Responsibilities:
     - Load rulebooks from filesystem
     - Validate rulebook structure and content
@@ -41,7 +39,7 @@ class RulebookManager:
 
     def __init__(self, rulebooks_dir: Union[str, Path], storage: Optional[StorageAdapter] = None):
         """Initialize rulebook manager.
-        
+
         Args:
             rulebooks_dir: Directory containing rulebooks
             storage: Optional storage adapter for versioning
@@ -52,10 +50,10 @@ class RulebookManager:
 
     def load(self, name: str) -> Optional[RulebookMetadata]:
         """Load a rulebook by name.
-        
+
         Args:
             name: Rulebook name (e.g., "engineering", "writing")
-            
+
         Returns:
             RulebookMetadata or None if not found
         """
@@ -85,7 +83,7 @@ class RulebookManager:
 
     def list_all(self) -> List[RulebookMetadata]:
         """List all available rulebooks.
-        
+
         Returns:
             List of RulebookMetadata
         """
@@ -112,10 +110,10 @@ class RulebookManager:
 
     def validate(self, rulebook: RulebookMetadata) -> List[str]:
         """Validate rulebook structure and content.
-        
+
         Args:
             rulebook: Rulebook to validate
-            
+
         Returns:
             List of validation errors (empty if valid)
         """
@@ -138,10 +136,10 @@ class RulebookManager:
 
     def store(self, rulebook: RulebookMetadata) -> bool:
         """Store rulebook in versioned artifacts.
-        
+
         Args:
             rulebook: Rulebook to store
-            
+
         Returns:
             True if stored successfully
         """
@@ -166,11 +164,11 @@ class RulebookManager:
 
     def diff(self, rulebook1: RulebookMetadata, rulebook2: RulebookMetadata) -> str:
         """Generate diff between two versions.
-        
+
         Args:
             rulebook1: First rulebook
             rulebook2: Second rulebook
-            
+
         Returns:
             Human-readable diff string
         """

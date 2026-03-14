@@ -1,13 +1,11 @@
 """Tests for CLI commands."""
 
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock, AsyncMock
 
 from typer.testing import CliRunner
-from specwiz.cli.main import app
 
+from specwiz.cli.main import app
 
 runner = CliRunner()
 
@@ -39,7 +37,7 @@ def test_cli_init_command():
             "init",
             "--repo", tmpdir,
         ])
-        
+
         # Command should execute (may succeed or show usage)
         assert result.exit_code in [0, 2]
 
@@ -51,7 +49,7 @@ def test_cli_doctor_command():
             "doctor",
             "--repo", tmpdir,
         ])
-        
+
         # Doctor should check system health
         assert result.exit_code in [0, 1, 2]
 
@@ -62,7 +60,7 @@ def test_cli_prd_command_help():
         "generate", "prd",
         "--help",
     ])
-    
+
     assert result.exit_code == 0
     assert "prd" in result.stdout.lower() or "product" in result.stdout.lower()
 
@@ -73,7 +71,7 @@ def test_cli_user_guide_command_help():
         "generate",
         "--help",
     ])
-    
+
     # Generate command should exist and show help
     assert result.exit_code == 0 or "generate" in result.stdout.lower()
 
@@ -84,7 +82,7 @@ def test_cli_release_notes_command_help():
         "generate",
         "--help",
     ])
-    
+
     # Generate command should exist and show help
     assert result.exit_code == 0 or "generate" in result.stdout.lower()
 
@@ -95,7 +93,7 @@ def test_cli_rulebook_list_help():
         "rulebook", "list",
         "--help",
     ])
-    
+
     assert result.exit_code == 0
     assert "list" in result.stdout.lower() or "rulebook" in result.stdout.lower()
 
@@ -106,7 +104,7 @@ def test_cli_rulebook_create_help():
         "rulebook", "create",
         "--help",
     ])
-    
+
     assert result.exit_code == 0
 
 
@@ -116,7 +114,7 @@ def test_cli_rulebook_validate_help():
         "rulebook", "validate",
         "--help",
     ])
-    
+
     assert result.exit_code == 0
 
 
@@ -125,15 +123,15 @@ def test_cli_rulebook_list_command():
     with tempfile.TemporaryDirectory() as tmpdir:
         rulebook_dir = Path(tmpdir) / "rulebooks"
         rulebook_dir.mkdir()
-        
+
         # Create a sample rulebook
         (rulebook_dir / "engineering.md").write_text("# Engineering Rulebook")
-        
+
         result = runner.invoke(app, [
             "rulebook", "list",
             "--repo", tmpdir,
         ])
-        
+
         # Should list rulebooks
         assert result.exit_code in [0, 1, 2]
 
@@ -147,7 +145,7 @@ def test_cli_rulebook_create_command():
             "--category", "engineering",
             "--repo", tmpdir,
         ])
-        
+
         # Should execute or show error
         assert result.exit_code in [0, 1, 2]
 
@@ -157,7 +155,7 @@ def test_cli_missing_required_option():
     result = runner.invoke(app, [
         "generate", "prd",
     ])
-    
+
     # Should fail with missing required arguments
     assert result.exit_code != 0
 
@@ -165,7 +163,7 @@ def test_cli_missing_required_option():
 def test_cli_invalid_command():
     """Test CLI with invalid command."""
     result = runner.invoke(app, ["invalid-command"])
-    
+
     # Should fail with command not found
     assert result.exit_code != 0
 
@@ -176,7 +174,7 @@ def test_cli_with_verbose_flag():
         "--help",
         "init",
     ])
-    
+
     # Should work even with reordered flags
     assert result.exit_code in [0, 2]
 
@@ -184,11 +182,11 @@ def test_cli_with_verbose_flag():
 def test_cli_output_formatting():
     """Test that CLI output is properly formatted."""
     result = runner.invoke(app, ["--help"])
-    
+
     # Output should be readable
     assert result.stdout is not None
     assert len(result.stdout) > 0
-    
+
     # Should have basic structure
     output_lower = result.stdout.lower()
     assert "usage" in output_lower or "commands" in output_lower
@@ -202,7 +200,7 @@ def test_cli_error_handling():
             "doctor",
             "--repo", tmpdir,
         ])
-        
+
         # Should handle gracefully (may show errors but not crash)
         assert isinstance(result.exit_code, int)
 
@@ -211,7 +209,7 @@ def test_cli_subcommand_group():
     """Test that generate and rulebook are subcommand groups."""
     result = runner.invoke(app, ["generate", "--help"])
     assert result.exit_code == 0
-    
+
     result = runner.invoke(app, ["rulebook", "--help"])
     assert result.exit_code == 0
 
@@ -225,13 +223,13 @@ def test_cli_command_isolation():
                 "init",
                 "--repo", tmpdir1,
             ])
-            
+
             # Run init in tmpdir2
             result2 = runner.invoke(app, [
                 "init",
                 "--repo", tmpdir2,
             ])
-            
+
             # Both should execute independently
             assert result1.exit_code in [0, 1, 2]
             assert result2.exit_code in [0, 1, 2]

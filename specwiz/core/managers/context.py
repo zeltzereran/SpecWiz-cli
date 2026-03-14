@@ -21,7 +21,7 @@ class ContextFile:
 
 class ContextManager:
     """Extracts and manages product context from repositories.
-    
+
     Responsibilities:
     - Extract README, architecture docs, code structure
     - Analyze git history for development patterns
@@ -31,7 +31,7 @@ class ContextManager:
 
     def __init__(self, repo_path: Union[str, Path]):
         """Initialize context manager.
-        
+
         Args:
             repo_path: Path to product repository
         """
@@ -40,7 +40,7 @@ class ContextManager:
 
     def extract_readme(self) -> Optional[ContextFile]:
         """Extract README content.
-        
+
         Returns:
             ContextFile with README content or None
         """
@@ -61,10 +61,10 @@ class ContextManager:
 
     def extract_directory_structure(self, max_depth: int = 3) -> str:
         """Extract repository directory structure.
-        
+
         Args:
             max_depth: Maximum directory depth to traverse
-            
+
         Returns:
             Text representation of directory tree
         """
@@ -102,10 +102,10 @@ class ContextManager:
 
     def extract_git_history(self, limit: int = 50) -> Optional[str]:
         """Extract recent git history.
-        
+
         Args:
             limit: Number of commits to extract
-            
+
         Returns:
             Git log as string or None if not a git repo
         """
@@ -126,7 +126,7 @@ class ContextManager:
 
     def extract_package_metadata(self) -> Dict[str, Any]:
         """Extract package/project metadata.
-        
+
         Returns:
             Dictionary of metadata (name, version, description, etc.)
         """
@@ -162,7 +162,7 @@ class ContextManager:
 
     async def generate_context_files(self) -> Dict[str, ContextFile]:
         """Generate all context files.
-        
+
         Returns:
             Dictionary of context files by name
         """
@@ -202,7 +202,7 @@ class ContextManager:
 
     def get_context(self) -> str:
         """Get full context as formatted string.
-        
+
         Returns:
             Complete context information
         """

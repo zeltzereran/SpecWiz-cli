@@ -10,17 +10,17 @@ from specwiz.core.interfaces.adapters import LLMAdapter, LLMResponse
 
 class AnthropicAdapter(LLMAdapter):
     """LLM adapter for Anthropic Claude API.
-    
+
     Supports both sync and async patterns. Credentials loaded from:
     - ANTHROPIC_API_KEY environment variable
     """
 
     def __init__(self, model: str = "claude-3-opus-20240229"):
         """Initialize Anthropic adapter.
-        
+
         Args:
             model: Claude model to use (default: claude-3-opus)
-            
+
         Raises:
             ValueError: If ANTHROPIC_API_KEY is not set
         """
@@ -44,14 +44,14 @@ class AnthropicAdapter(LLMAdapter):
         **kwargs: Any,
     ) -> LLMResponse:
         """Send prompt to Claude and return response.
-        
+
         Args:
             prompt: User message/prompt
             system: Optional system prompt
             temperature: Sampling temperature (0.0-1.0)
             max_tokens: Max tokens in response
             **kwargs: Additional arguments passed to API
-            
+
         Returns:
             LLMResponse with generated content
         """
@@ -90,14 +90,14 @@ class AnthropicAdapter(LLMAdapter):
         **kwargs: Any,
     ):
         """Stream response from Claude.
-        
+
         Args:
             prompt: User message/prompt
             system: Optional system prompt
             temperature: Sampling temperature
             max_tokens: Max tokens in response
             **kwargs: Additional arguments passed to API
-            
+
         Yields:
             Text chunks from response
         """

@@ -1,13 +1,13 @@
 """Pytest configuration and fixtures."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
 
 from specwiz.core.interfaces import (
     ConfigAdapter,
     EventBusAdapter,
     LLMAdapter,
-    PipelineEngine,
     StorageAdapter,
 )
 
