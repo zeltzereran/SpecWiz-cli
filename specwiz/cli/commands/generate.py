@@ -3,9 +3,9 @@
 import asyncio
 import sys
 from pathlib import Path
+from typing import Any
 
 import typer
-from typing import Any
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress
