@@ -83,12 +83,14 @@ def test_cli_version():
 
 
 def test_cli_init_command():
-    """Test CLI init command."""
+    """Test CLI init --product command."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import os
 
         orig = os.getcwd()
+        saved_key = os.environ.pop("GOOGLE_API_KEY", None)
         try:
+            os.environ["GOOGLE_API_KEY"] = "test-key"
             os.chdir(tmpdir)
             result = runner.invoke(
                 app,
@@ -96,16 +98,233 @@ def test_cli_init_command():
             )
         finally:
             os.chdir(orig)
+            os.environ.pop("GOOGLE_API_KEY", None)
+            if saved_key is not None:
+                os.environ["GOOGLE_API_KEY"] = saved_key
 
-        # Command should execute (may succeed or show usage)
-        assert result.exit_code in [0, 2]
+        assert result.exit_code == 0
+        assert "testproduct" in _strip_ansi(result.stdout)
+
+
+def test_cli_init_without_product():
+    """Test CLI init without --product (sets global config only)."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import os
+
+        orig = os.getcwd()
+        saved_key = os.environ.pop("GOOGLE_API_KEY", None)
+        try:
+            os.environ["GOOGLE_API_KEY"] = "test-key"
+            os.chdir(tmpdir)
+            result = runner.invoke(app, ["init"])
+        finally:
+            os.chdir(orig)
+            os.environ.pop("GOOGLE_API_KEY", None)
+            if saved_key is not None:
+                os.environ["GOOGLE_API_KEY"] = saved_key
+
+        assert result.exit_code == 0
+        plain = _strip_ansi(result.stdout)
+        assert "Global config" in plain
+        # Default is now Ollama
+        assert "qwen2.5:7b" in plain
+        config_file = Path(tmpdir) / "specwiz.yaml"
+        assert config_file.exists()
+        content = config_file.read_text()
+        assert "llm_model: qwen2.5:7b" in content
+
+
+def test_cli_init_updates_existing_config():
+    """init --model updates existing config file with new model."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        import os
+
+        orig = os.getcwd()
+        saved_key = os.environ.pop("GOOGLE_API_KEY", None)
+        try:
+            os.environ["GOOGLE_API_KEY"] = "test-key"
+            os.chdir(tmpdir)
+            # First init with default model (Ollama)
+            result1 = runner.invoke(app, ["init"])
+            assert result1.exit_code == 0
+            # Second init with different model (Gemini)
+            result2 = runner.invoke(app, ["init", "--model", "gemini-2.0-flash"])
+            assert result2.exit_code == 0
+        finally:
+            os.chdir(orig)
+            os.environ.pop("GOOGLE_API_KEY", None)
+            if saved_key is not None:
+                os.environ["GOOGLE_API_KEY"] = saved_key
+
+        config_file = Path(tmpdir) / "specwiz.yaml"
+        content = config_file.read_text()
+        assert "llm_model: gemini-2.0-flash" in content
+        assert "qwen2.5:7b" not in content
+
+
+def test_cli_init_product_exists():
+    """Test init --product exits 1 when product already exists."""
+    import os
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orig = os.getcwd()
+        saved_key = os.environ.pop("GOOGLE_API_KEY", None)
+        try:
+            os.environ["GOOGLE_API_KEY"] = "test-key"
+            os.chdir(tmpdir)
+            # First init
+            result1 = runner.invoke(app, ["init", "--product", "testproduct"])
+            assert result1.exit_code == 0
+            # Second init with same product
+            result2 = runner.invoke(app, ["init", "--product", "testproduct"])
+        finally:
+            os.chdir(orig)
+            os.environ.pop("GOOGLE_API_KEY", None)
+            if saved_key is not None:
+                os.environ["GOOGLE_API_KEY"] = saved_key
+
+        assert result2.exit_code == 1
+
+
+def test_cli_init_model_gemini_no_key():
+    """init --model gemini-1.5-pro exits 1 when GOOGLE_API_KEY is missing."""
+    import os
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orig = os.getcwd()
+        saved_key = os.environ.pop("GOOGLE_API_KEY", None)
+        try:
+            os.chdir(tmpdir)
+            result = runner.invoke(
+                app,
+                ["init", "--product", "testproduct", "--model", "gemini-1.5-pro"],
+            )
+        finally:
+            os.chdir(orig)
+            if saved_key is not None:
+                os.environ["GOOGLE_API_KEY"] = saved_key
+
+    assert result.exit_code == 1
+
+
+def test_cli_init_model_gemini_with_key(tmp_path):
+    """init --model gemini-1.5-pro succeeds when GOOGLE_API_KEY is set."""
+    import os
+
+    saved_key = os.environ.get("GOOGLE_API_KEY")
+    os.environ["GOOGLE_API_KEY"] = "test-key"
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(
+            app,
+            ["init", "--product", "testproduct", "--model", "gemini-1.5-pro"],
+        )
+    finally:
+        os.chdir(orig)
+        if saved_key is None:
+            os.environ.pop("GOOGLE_API_KEY", None)
+        else:
+            os.environ["GOOGLE_API_KEY"] = saved_key
+
+    assert result.exit_code == 0
+    config = (tmp_path / "specwiz.yaml").read_text()
+    assert "gemini-1.5-pro" in config
+    assert "llm_provider: gemini" in config
+
+
+def test_cli_init_model_anthropic_no_key():
+    """init --model claude-3-5-sonnet-20241022 exits 1 when ANTHROPIC_API_KEY is missing."""
+    import os
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        orig = os.getcwd()
+        saved_key = os.environ.pop("ANTHROPIC_API_KEY", None)
+        try:
+            os.chdir(tmpdir)
+            result = runner.invoke(
+                app,
+                [
+                    "init",
+                    "--product",
+                    "testproduct",
+                    "--model",
+                    "claude-3-5-sonnet-20241022",
+                ],
+            )
+        finally:
+            os.chdir(orig)
+            if saved_key is not None:
+                os.environ["ANTHROPIC_API_KEY"] = saved_key
+
+    assert result.exit_code == 1
+
+
+def test_cli_init_help_shows_model():
+    """init --help lists the --model option."""
+    result = runner.invoke(app, ["init", "--help"])
+    assert result.exit_code == 0
+    plain = _strip_ansi(result.stdout)
+    assert "--model" in plain
+    assert "--product" in plain
 
 
 def test_cli_doctor_command():
     """Test CLI doctor command."""
     result = runner.invoke(app, ["doctor"])
-    # Doctor should check system health
-    assert result.exit_code in [0, 1, 2]
+    assert result.exit_code == 0
+    assert "SpecWiz System Health" in _strip_ansi(result.stdout)
+
+
+def test_cli_doctor_gemini_config_missing_google_key(tmp_path, monkeypatch):
+    """doctor checks GOOGLE_API_KEY when config selects gemini provider."""
+    import os
+
+    (tmp_path / "specwiz.yaml").write_text(
+        "base_path: .specwiz\nllm_provider: gemini\nllm_model: gemini-1.5-pro\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(app, ["doctor"])
+    finally:
+        os.chdir(orig)
+
+    plain = _strip_ansi(result.stdout)
+    assert result.exit_code == 0
+    assert "provider=gemini, model=gemini-1.5-pro" in plain
+    assert "GOOGLE_API_KEY not set" in plain
+
+
+def test_cli_doctor_anthropic_config_missing_anthropic_key(tmp_path, monkeypatch):
+    """doctor checks ANTHROPIC_API_KEY when config selects anthropic provider."""
+    import os
+
+    (tmp_path / "specwiz.yaml").write_text(
+        (
+            "base_path: .specwiz\n"
+            "llm_provider: anthropic\n"
+            "llm_model: claude-3-5-sonnet-20241022\n"
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(app, ["doctor"])
+    finally:
+        os.chdir(orig)
+
+    plain = _strip_ansi(result.stdout)
+    assert result.exit_code == 0
+    assert "provider=anthropic" in plain
+    assert "claude-3-5-sonnet-20241022" in plain
+    assert "ANTHROPIC_API_KEY not set" in plain
 
 
 def test_cli_prd_command_help():
@@ -120,6 +339,84 @@ def test_cli_prd_command_help():
     )
 
     assert result.exit_code == 0
+
+
+def test_cli_init_model_ollama(tmp_path):
+    """init --model ollama model succeeds without API key requirement."""
+    import os
+
+    orig = os.getcwd()
+    # Remove API keys to ensure Ollama works without them
+    saved_google = os.environ.pop("GOOGLE_API_KEY", None)
+    saved_anthropic = os.environ.pop("ANTHROPIC_API_KEY", None)
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(
+            app,
+            ["init", "--product", "testproduct", "--model", "qwen2.5:7b"],
+        )
+    finally:
+        os.chdir(orig)
+        if saved_google is not None:
+            os.environ["GOOGLE_API_KEY"] = saved_google
+        if saved_anthropic is not None:
+            os.environ["ANTHROPIC_API_KEY"] = saved_anthropic
+
+    assert result.exit_code == 0
+    config = (tmp_path / "specwiz.yaml").read_text()
+    assert "qwen2.5:7b" in config
+    assert "llm_provider: ollama" in config
+
+
+def test_cli_init_ollama_without_product(tmp_path):
+    """Test init Ollama without --product (sets global config only)."""
+    import os
+
+    orig = os.getcwd()
+    saved_google = os.environ.pop("GOOGLE_API_KEY", None)
+    saved_anthropic = os.environ.pop("ANTHROPIC_API_KEY", None)
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(app, ["init", "--model", "mistral:7b"])
+    finally:
+        os.chdir(orig)
+        if saved_google is not None:
+            os.environ["GOOGLE_API_KEY"] = saved_google
+        if saved_anthropic is not None:
+            os.environ["ANTHROPIC_API_KEY"] = saved_anthropic
+
+    assert result.exit_code == 0
+    plain = _strip_ansi(result.stdout)
+    assert "Global config" in plain
+    assert "mistral:7b" in plain
+    config_file = tmp_path / "specwiz.yaml"
+    assert config_file.exists()
+    content = config_file.read_text()
+    assert "llm_model: mistral:7b" in content
+    assert "llm_provider: ollama" in content
+
+
+def test_cli_doctor_ollama_config(tmp_path, monkeypatch):
+    """doctor shows Ollama configuration and checks server connectivity."""
+    import os
+
+    (tmp_path / "specwiz.yaml").write_text(
+        "base_path: .specwiz\nllm_provider: ollama\nllm_model: qwen2.5:7b\n",
+        encoding="utf-8",
+    )
+
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        result = runner.invoke(app, ["doctor"])
+    finally:
+        os.chdir(orig)
+
+    plain = _strip_ansi(result.stdout)
+    assert result.exit_code == 0
+    assert "provider=ollama, model=qwen2.5:7b" in plain
+    # Should mention Ollama server check (either running or not reachable)
+    assert "Ollama" in plain
     assert "prd" in result.stdout.lower() or "product" in result.stdout.lower()
 
 

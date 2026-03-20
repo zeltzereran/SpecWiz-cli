@@ -7,7 +7,10 @@ Welcome to SpecWiz! This guide walks you through the complete workflow, from ins
 ### Prerequisites
 
 - Python 3.10 or higher
-- Anthropic API key
+- One of the following LLM providers:
+    - **Ollama** (recommended for free/local): Download from https://ollama.ai, then run `ollama serve` and `ollama pull qwen2.5:7b` - no API key needed
+    - **Google Gemini** (free tier available): Get `GOOGLE_API_KEY` from https://ai.google.dev
+    - **Anthropic Claude** (paid): Get `ANTHROPIC_API_KEY` from https://console.anthropic.com
 
 ### Install from Source
 
@@ -25,7 +28,26 @@ pip install -e ".[dev]"
 
 ## Configuration
 
-### Set up Anthropic API Key
+### Set up API Key (optional if using Ollama)
+
+**Ollama (local, no API key needed):**
+
+```bash
+# Install Ollama from https://ollama.ai
+# Start server in one terminal
+ollama serve
+
+# In another terminal, download a model
+ollama pull qwen2.5:7b
+```
+
+**Google Gemini:**
+
+```bash
+export GOOGLE_API_KEY="..."
+```
+
+**Anthropic:**
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
@@ -36,8 +58,8 @@ A `specwiz.yaml` file is created automatically when you run `specwiz init`. You 
 ```yaml
 # specwiz.yaml
 base_path: .specwiz
-llm_provider: anthropic
-llm_model: claude-3-5-sonnet-20241022
+llm_provider: ollama
+llm_model: qwen2.5:7b
 ```
 
 ---
@@ -53,7 +75,7 @@ SpecWiz has two tiers of artifacts:
 | Product Context | **Per product** | `create product-context --product <name>` |
 | Generated docs | **Per product** | `generate prd/user-guide/release-notes --product <name>` |
 
-The global knowledge base and rulebooks reflect your organization's standards and example documents � they are created **once** and shared across all products in the workspace.
+The global knowledge base and rulebooks reflect your organization's standards and example documents - they are created **once** and shared across all products in the workspace.
 
 ---
 
@@ -85,15 +107,36 @@ project_root/
 
 ## Step-by-Step Workflow
 
-### Step 1 - Initialize a product
+### Step 1 - Initialize SpecWiz (set global LLM config)
+
+First, set your LLM model globally:
+
+```bash
+specwiz init
+```
+
+This creates `specwiz.yaml` with the default Ollama model (`qwen2.5:7b`). To use a different model:
+
+```bash
+# Ollama models (local, free)
+specwiz init --model qwen2.5:7b
+specwiz init --model mistral:7b
+specwiz init --model llama2:7b
+
+# Google Gemini (free tier)
+specwiz init --model gemini-2.0-flash
+
+# Anthropic Claude (paid)
+specwiz init --model claude-3-5-sonnet-20241022
+```
+
+### Step 2 - Initialize a product
 
 ```bash
 specwiz init --product MyProduct
 ```
 
-Creates the per-product directory structure under `.specwiz/MyProduct/`.
-
-### Step 2 - Build the global knowledge base
+### Step 3 - Build the global knowledge base
 
 ```bash
 specwiz create knowledge-base --sources ./docs
@@ -205,6 +248,12 @@ specwiz create rulebook prd --resources ./examples/prd-v2
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+### `GOOGLE_API_KEY not set`
+
+```bash
+export GOOGLE_API_KEY="..."
 ```
 
 ### Rulebook not found

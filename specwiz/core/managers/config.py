@@ -45,8 +45,8 @@ class CompositeConfigAdapter(ConfigAdapter):
         defaults = {
             "project_name": "",
             "project_root": str(self.project_root),
-            "llm_model": "claude-3-opus-20240229",
-            "llm_provider": "anthropic",
+            "llm_model": "qwen2.5:7b",
+            "llm_provider": "ollama",
             "temperature": 0.7,
             "max_tokens": 4096,
             "storage_backend": "local",
